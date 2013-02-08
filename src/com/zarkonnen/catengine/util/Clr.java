@@ -45,4 +45,9 @@ public final class Clr {
 	public static final Clr BLACK = new Clr(0, 0, 0);
 	public static final Clr WHITE = new Clr(255, 255, 255);
 	public static final Clr RED = new Clr(255, 0, 0);
+	public static final Clr GREEN = new Clr(0, 255, 0);
+	public static final Clr BLUE = new Clr(0, 0, 255);
+	public static final Clr YELLOW = new Clr(255, 255, 0);
+	public static final Clr MAGENTA = new Clr(255, 0, 255);
+	public static final Clr CYAN = new Clr(0, 255, 255);
 }

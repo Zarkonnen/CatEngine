@@ -1,8 +1,10 @@
 package com.zarkonnen.catengine;
 
 import com.zarkonnen.catengine.util.Clr;
+import static com.zarkonnen.catengine.util.Utils.*;
 import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.ScreenMode;
+import java.util.Map;
 import javax.swing.JOptionPane;
 
 public class CatEngine {
@@ -19,10 +21,13 @@ public class CatEngine {
 		e.run(new Game() {
 			Pt cursor = new Pt(0, 0);
 			int i = 0;
+			boolean catness = false;
+			Hooks hooks = new Hooks();
 			@Override
 			public void input(Input in) {
 				cursor = in.cursor();
 				i++;
+				catness = false;
 				if (in.keyDown("1")) {
 					for (ScreenMode m : in.modes()) {
 						if (!m.fullscreen) {
@@ -53,14 +58,35 @@ public class CatEngine {
 				if (in.keyDown("C")) {
 					in.setCursorVisible(!in.isCursorVisible());
 				}
+				hooks.hit(in);
 			}
 
 			@Override
 			public void render(Frame f) {
 				ScreenMode sm = f.mode();
-				f.rect(Clr.BLACK, 0, 0, sm.width, sm.height, 0);
-				f.rect(Clr.RED, cursor.x, cursor.y, 10, 10, (Math.PI * 2 * i) / 100);
-				f.blit("cat.jpg", new Clr(0, 255, 0, i % 255), (i * 3) % sm.width, (i * 10) % sm.height, 0, 0, (Math.PI * 2 * i) / 1000);
+				Draw d = new Draw(f);
+				if (catness) {
+					d.blit("cat.jpg", null, 0, 0, sm.width, sm.height);
+				} else {
+					d.rect(Clr.BLACK, 0, 0, sm.width, sm.height);
+				}
+				d.rect(Clr.RED, cursor.x, cursor.y, 10, 10, (Math.PI * 2 * i) / 100);
+				d.blit("cat.jpg", new Clr(0, 255, 0, i % 255), (i * 3) % sm.width, (i * 10) % sm.height, 0, 0, (Math.PI * 2 * i) / 1000);
+				Fount fo = new Fount("Courier12", 8, 7, 19);
+				d.text("Welcome to CatEngine!\n[RED]Meow.", fo, 100, 100);
+				fo = new Fount("LiberationMono18", 12, 11, 26);
+				String green = "" + (i / 10) % 10;
+				String green2 = "" + i % 10;
+				Hook hook = new Hook(Hook.Type.HOVER) {
+					@Override
+					public void run(Input in, Pt p) {
+						catness = true;
+					}
+				};
+				d.text("Welcome to CatEngine!\n[33" + green + green2 + "00]Meow.", fo, 100.0, 300.0, m(p("Meow.", hook)));
+				d.text("(Try moving your cursor over that \"Meow.\")", fo, 100, 400);
+				d.text(f.fps() + " FPS", fo, 10, 10);
+				hooks = d.getHooks();
 			}
 		});
 	}

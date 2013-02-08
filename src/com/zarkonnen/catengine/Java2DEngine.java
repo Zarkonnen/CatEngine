@@ -15,6 +15,7 @@ import java.awt.DisplayMode;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.KeyEvent;
@@ -30,6 +31,7 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
@@ -47,6 +49,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 	long lastFrame;
 	boolean quitted = false;
 	boolean cursorVisible = true;
+	LinkedList<Long> frameIntervalWindow = new LinkedList<Long>();
 
 	public Java2DEngine(String winTitle, String loadBase, Integer frameRate) {
 		this.winTitle = winTitle;
@@ -54,7 +57,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		this.msPerFrame = 1000 / frameRate;
 	}
 
-	public MyFrame next() {
+	private MyFrame next() {
 		if (lastFrame != 0) {
 			canvas.getBufferStrategy().show();
 			long nextFrame = lastFrame + msPerFrame * 1000000;
@@ -64,6 +67,10 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 				try { Thread.sleep(timeToSleep); } catch (Exception e) {}
 			}
 			while (System.nanoTime() < nextFrame) {}
+			frameIntervalWindow.add(System.nanoTime() - lastFrame);
+			if (frameIntervalWindow.size() > 3) {
+				frameIntervalWindow.removeFirst();
+			}
 		}
 		lastFrame = System.nanoTime();
 		InputFrame f;
@@ -129,6 +136,19 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		public MyFrame(InputFrame input) {
 			this.input = input;
 			g = (Graphics2D) canvas.getBufferStrategy().getDrawGraphics();
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		}
+		
+		@Override
+		public int fps() {
+			if (frameIntervalWindow.isEmpty()) { return 0; }
+			long sum = 0;
+			for (long l : frameIntervalWindow) {
+				sum += l;
+			}
+			long avg = sum / frameIntervalWindow.size();
+			return (int) (1000000000l / avg);
 		}
 		
 		@Override
@@ -284,7 +304,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 	}
 	
 	BufferedImage getImage(String name, Clr tint) {
-		String key = name + tint == null ? "" : tint.toString();
+		String key = name + (tint == null ? "" : tint.toString());
 		if (images.containsKey(key)) {
 			SoftReference<BufferedImage> ref = images.get(key);
 			BufferedImage img = ref.get();
@@ -297,6 +317,9 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		}
 		if (img == null) {
 			img = readImage(name);
+		}
+		if (img == null) {
+			return null;
 		}
 		if (tint != null) {
 			img = tint(img, new Color(tint.r, tint.g, tint.b, tint.a));

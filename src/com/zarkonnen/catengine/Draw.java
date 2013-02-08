@@ -10,6 +10,8 @@ public class Draw {
 	Frame f;
 	Hooks hs = new Hooks();
 	
+	public Hooks getHooks() { return hs; }
+	
 	public Draw(Frame f) {
 		this.f = f;
 	}
@@ -49,8 +51,18 @@ public class Draw {
 		return this;
 	}
 	
+	public Draw blit(String img, Clr c, double x, double y, double width, double height, double angle) {
+		f.blit(img, c, x, y, width, height, angle);
+		return this;
+	}
+	
 	public Draw rect(Clr c, double x, double y, double width, double height) {
 		f.rect(c, x, y, width, height, 0);
+		return this;
+	}
+	
+	public Draw rect(Clr c, double x, double y, double width, double height, double angle) {
+		f.rect(c, x, y, width, height, angle);
 		return this;
 	}
 	
@@ -87,11 +99,11 @@ public class Draw {
 		return text(text, f, x, y, maxWidth, 10000, true, new HashMap<String, Hook>());
 	}
 	
-	public Draw text(String text, Fount f, double x, double y, HashMap<String, Hook> hooks) {
+	public Draw text(String text, Fount f, double x, double y, Map<String, Hook> hooks) {
 		return text(text, f, x, y, 10000, 10000, true, hooks);
 	}
 	
-	public Draw text(String text, Fount f, double x, double y, int maxWidth, HashMap<String, Hook> hooks) {
+	public Draw text(String text, Fount f, double x, double y, int maxWidth, Map<String, Hook> hooks) {
 		return text(text, f, x, y, maxWidth, 10000, true, hooks);
 	}
 	
@@ -114,7 +126,7 @@ public class Draw {
 		return this;
 	}
 	
-	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands, HashMap<String, Hook> hooksForStrings) {
+	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands, Map<String, Hook> hooksForStrings) {
 		for (Map.Entry<String, Hook> sub : hooksForStrings.entrySet()) {
 			text = text.replace(sub.getKey(), "[!" + sub.getKey() + "]" + sub.getKey() + "[!]");
 		}
@@ -187,12 +199,13 @@ public class Draw {
 					System.arraycopy(cs, n + 1, name, 0, name.length);
 					String nameS = new String(name);
 					String sym = null;
+					Clr symC = null;
 					if (nameS.startsWith("[") && nameS.contains("]")) {
 						String tintN = nameS.substring(1, nameS.indexOf("]"));
 						if (!tintN.isEmpty()) {
 							if (tintN.matches("[a-fA-F0-9]{6}")) {
 								try {
-									tintC = new Clr(
+									symC = new Clr(
 											Integer.parseInt(tintN.substring(0, 2), 16),
 											Integer.parseInt(tintN.substring(2, 4), 16),
 											Integer.parseInt(tintN.substring(4, 6), 16));
@@ -203,7 +216,7 @@ public class Draw {
 							}
 							if (tintN.matches("[a-fA-F0-9]{8}")) {
 								try {
-									tintC = new Clr(
+									symC = new Clr(
 											Integer.parseInt(tintN.substring(0, 2), 16),
 											Integer.parseInt(tintN.substring(2, 4), 16),
 											Integer.parseInt(tintN.substring(4, 6), 16),
@@ -213,15 +226,15 @@ public class Draw {
 									e.printStackTrace();
 								}
 							}
-							if (tintC == null) {
+							if (symC == null) {
 								try {
-									tintC = (Clr) Clr.class.getField(tintN).get(null);
+									symC = (Clr) Clr.class.getField(tintN).get(null);
 								} catch (Exception e) {
 									// Ignore
 									e.printStackTrace();
 								}
 							}
-							if (tintC != null) {
+							if (symC != null) {
 								sym = nameS.substring(nameS.indexOf("]") + 1);
 							}
 						}
@@ -229,7 +242,7 @@ public class Draw {
 					
 					if (sym == null) { sym = nameS; }
 					int overhang = 0; // qqDPS
-					Rect imgSz = f.blit(sym, tintC, x + (c) * fount.displayWidth, y + r * fount.height + overhang, 0, 0, 0);
+					Rect imgSz = f.blit(sym, symC, x + (c) * fount.displayWidth, y + r * fount.height + overhang, 0, 0, 0);
 					n = n2 + 1;
 					if (imgSz != null) {
 						hs.add(imgSz, hooksForStrings.get("{" + sym + "}"));
@@ -269,7 +282,7 @@ public class Draw {
 					if (!tintN.isEmpty()) {
 						if (tintN.matches("[a-fA-F0-9]{6}")) {
 							try {
-								tintC = new Clr(
+								newC = new Clr(
 										Integer.parseInt(tintN.substring(0, 2), 16),
 										Integer.parseInt(tintN.substring(2, 4), 16),
 										Integer.parseInt(tintN.substring(4, 6), 16));
@@ -280,7 +293,7 @@ public class Draw {
 						}
 						if (tintN.matches("[a-fA-F0-9]{8}")) {
 							try {
-								tintC = new Clr(
+								newC = new Clr(
 										Integer.parseInt(tintN.substring(0, 2), 16),
 										Integer.parseInt(tintN.substring(2, 4), 16),
 										Integer.parseInt(tintN.substring(4, 6), 16),
@@ -290,9 +303,9 @@ public class Draw {
 								e.printStackTrace();
 							}
 						}
-						if (tintC == null) {
+						if (newC == null) {
 							try {
-								tintC = (Clr) Clr.class.getField(tintN).get(null);
+								newC = (Clr) Clr.class.getField(tintN).get(null);
 							} catch (Exception e) {
 								// Ignore
 								e.printStackTrace();

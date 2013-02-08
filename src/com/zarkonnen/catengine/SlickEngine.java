@@ -149,6 +149,10 @@ public class SlickEngine extends BasicGame implements Engine {
 		GameContainer gc;
 		Graphics g;
 		
+		@Override
+		public int fps() {
+			return gc.getFPS();
+		}
 		
 		@Override
 		public ScreenMode mode() {
@@ -186,8 +190,13 @@ public class SlickEngine extends BasicGame implements Engine {
 			if (width == 0 && height == 0) {
 				g.drawImage(image, 0, 0, tint == null ? null : new Color(tint.r, tint.g, tint.b, tint.a));
 			} else {
-				g.drawImage(image, (float) x, (float) y, (float) (x + width), (float) (y + height), 0f, 0f, image.getWidth(), image.getHeight(), tint == null ? null : new Color(tint.r, tint.g, tint.b, tint.a));
+				if (tint == null) {
+					g.drawImage(image, (float) x, (float) y, (float) (x + width), (float) (y + height), 0f, 0f, image.getWidth(), image.getHeight());
+				} else {
+					g.drawImage(image, (float) x, (float) y, (float) (x + width), (float) (y + height), 0f, 0f, image.getWidth(), image.getHeight(), new Color(tint.r, tint.g, tint.b, tint.a));
+				}
 			}
+			g.setColor(Color.white);
 			if (angle != 0) { g.rotate(0, 0, (float) - (angle * 180 / Math.PI)); }
 			g.translate((float) -x, (float) -y);
 			return new Rect(x, y, width == 0 ? image.getWidth() : width, height == 0 ? image.getHeight() : height);

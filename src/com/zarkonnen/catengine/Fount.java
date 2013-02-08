@@ -6,8 +6,8 @@ public final class Fount {
 	public final int displayWidth;
 	public final int height;
 
-	public Fount(String loadBase, int width, int displayWidth, int height) {
-		this.loadBase = loadBase;
+	public Fount(String name, int width, int displayWidth, int height) {
+		this.loadBase = name + "/";
 		this.width = width;
 		this.displayWidth = displayWidth;
 		this.height = height;
