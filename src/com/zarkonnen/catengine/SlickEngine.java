@@ -22,7 +22,7 @@ public class SlickEngine extends BasicGame implements Engine {
 	
 	int fps;
 	String loadBase;
-	AppGameContainer agc;
+	MyAppGameContainer agc;
 	Game g;
 	boolean fullscreen;
 	boolean cursorVisible = true;
@@ -45,18 +45,53 @@ public class SlickEngine extends BasicGame implements Engine {
 	public void render(GameContainer gc, Graphics grphcs) throws SlickException {
 		g.render(new MyFrame(gc, grphcs));
 	}
-
+	
 	@Override
-	public void run(com.zarkonnen.catengine.Game g) {
+	public void setup(com.zarkonnen.catengine.Game g) {
+		this.g = g;
 		this.g = g;
 		try {
-			agc = new AppGameContainer(this);
+			agc = new MyAppGameContainer(this);
 			agc.setDisplayMode(800, 600, false);
-			agc.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
-		}		
+		}	
+	}
+	
+	class MyAppGameContainer extends AppGameContainer {
+		public MyAppGameContainer(org.newdawn.slick.Game game) throws SlickException {
+			super(game);
+			setup();
+			getDelta();
+		}
+
+		public void runUntil(Condition c) throws SlickException {
+			getDelta();
+			while (!c.satisfied() && running()) {
+				gameLoop();
+			}
+
+			if (forceExit) {
+				System.exit(0);
+			}
+		}
+	}
+
+	@Override
+	public void runUntil(Condition u) {
+		try {
+			agc.runUntil(u);
+		} catch (SlickException e) {
+			e.printStackTrace();
+			agc.destroy();
+			System.exit(1);
+		}
+	}
+	
+	@Override
+	public void destroy() {
+		agc.destroy();
 	}
 	
 	private class MyInput implements com.zarkonnen.catengine.Input {

@@ -36,6 +36,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMotionListener {
+	Game g;
 	String winTitle;
 	final String loadBase;
 	boolean fullscreen = false;
@@ -82,7 +83,9 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		return new MyFrame(f);
 	}
 
-	public void start() {
+	@Override
+	public void setup(Game g) {
+		this.g = g;
 		inputFrame = new InputFrame();
 		gameFrame = new JFrame(winTitle);
 		gameFrame.setIgnoreRepaint(true);
@@ -105,16 +108,14 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		originalMode = config.getDevice().getDisplayMode();
 	}
 
-	public void quit() {
-		quitMe();
+	@Override
+	public void destroy() {
+		gameFrame.dispose(); quitted = true;
 	}
 	
-	void quitMe() { gameFrame.dispose(); quitted = true; }
-
 	@Override
-	public void run(Game g) {
-		start();
-		while (!quitted) {
+	public void runUntil(Condition u) {
+		while (!quitted && !u.satisfied()) {
 			MyFrame f = next();
 			g.input(f);
 			if (quitted) { return; }
@@ -279,7 +280,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 
 		@Override
 		public void quit() {
-			quitMe();
+			destroy();
 		}
 
 		@Override

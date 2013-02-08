@@ -1,5 +1,7 @@
 package com.zarkonnen.catengine;
 
 public interface Engine {
-	public void run(Game g);
+	public void setup(Game g);
+	public void runUntil(Condition u);
+	public void destroy();
 }

@@ -18,7 +18,7 @@ public class CatEngine {
 			ex.printStackTrace();
 			return;
 		}
-		e.run(new Game() {
+		e.setup(new Game() {
 			Pt cursor = new Pt(0, 0);
 			int i = 0;
 			boolean catness = false;
@@ -106,5 +106,7 @@ public class CatEngine {
 				hooks = d.getHooks();
 			}
 		});
+		e.runUntil(Condition.ALWAYS);
+		e.destroy();
 	}
 }
