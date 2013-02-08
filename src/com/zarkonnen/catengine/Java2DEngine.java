@@ -1,4 +1,4 @@
-package com.zarkonnen.catengine.java2d;
+package com.zarkonnen.catengine;
 
 import com.zarkonnen.catengine.Engine;
 import com.zarkonnen.catengine.Frame;
@@ -6,13 +6,16 @@ import com.zarkonnen.catengine.Game;
 import com.zarkonnen.catengine.Input;
 import com.zarkonnen.catengine.util.Clr;
 import com.zarkonnen.catengine.util.Pt;
+import com.zarkonnen.catengine.util.Rect;
 import com.zarkonnen.catengine.util.ScreenMode;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.DisplayMode;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -30,7 +33,7 @@ import java.util.HashSet;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotionListener {
+public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMotionListener {
 	String winTitle;
 	final String loadBase;
 	boolean fullscreen = false;
@@ -43,8 +46,9 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 	int msPerFrame;
 	long lastFrame;
 	boolean quitted = false;
+	boolean cursorVisible = true;
 
-	public J2DEngine(String winTitle, String loadBase, int frameRate) {
+	public Java2DEngine(String winTitle, String loadBase, Integer frameRate) {
 		this.winTitle = winTitle;
 		this.loadBase = loadBase;
 		this.msPerFrame = 1000 / frameRate;
@@ -77,8 +81,6 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 		gameFrame.setIgnoreRepaint(true);
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		canvas = new Canvas();
-		gameFrame.setCursor(null);
-		canvas.setCursor(null);
 		canvas.setIgnoreRepaint(true);
 		gameFrame.add(canvas);
 		gameFrame.setSize(800, 600);
@@ -156,6 +158,8 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 
 		@Override
 		public Input setMode(ScreenMode mode) {
+			gameFrame.setCursor(null);
+			canvas.setCursor(null);
 			config.getDevice().setFullScreenWindow(null);
 			if (mode.fullscreen) {
 				if (!fullscreen) {
@@ -178,6 +182,7 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 				gameFrame.setSize(mode.width, mode.height);
 				fullscreen = false;
 			}
+			setCursorVisible(cursorVisible);
 			return this;
 		}
 		
@@ -222,7 +227,7 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 		}
 
 		@Override
-		public Frame rect(Clr c, double x, double y, double width, double height, double angle) {
+		public Rect rect(Clr c, double x, double y, double width, double height, double angle) {
 			g.setColor(new Color(c.r, c.g, c.b, c.a));
 			if (angle == 0) {
 				g.fill(new Rectangle2D.Double(x, y, width, height));
@@ -233,13 +238,13 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 				g.rotate(-angle);
 				g.translate(-x, -y);
 			}
-			return this;
+			return new Rect(x, y, width, height);
 		}
 
 		@Override
-		public Frame blit(String img, Clr tint, double x, double y, double width, double height, double angle) {
+		public Rect blit(String img, Clr tint, double x, double y, double width, double height, double angle) {
 			BufferedImage image = getImage(img, tint);
-			if (image == null) { return this; }
+			if (image == null) { return null; }
 			g.translate(x, y);
 			if (angle != 0) { g.rotate(angle); }
 			if (width == 0 && height == 0) {
@@ -249,12 +254,32 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 			}
 			if (angle != 0) { g.rotate(-angle); }
 			g.translate(-x, -y);
-			return this;
+			return new Rect(x, y, width == 0 ? image.getWidth() : width, height == 0 ? image.getHeight() : height);
 		}
 
 		@Override
 		public void quit() {
 			quitMe();
+		}
+
+		@Override
+		public boolean isCursorVisible() {
+			return cursorVisible;
+		}
+
+		@Override
+		public Input setCursorVisible(boolean visible) {
+			cursorVisible = visible;
+			if (visible) {
+				gameFrame.setCursor(null);
+				canvas.setCursor(null);
+			} else {
+				BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+				Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
+				gameFrame.setCursor(blankCursor);
+				canvas.setCursor(blankCursor);
+			}
+			return this;
 		}
 	}
 	
@@ -281,12 +306,12 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 	}
 	
 	BufferedImage readImage(String name) {
-		InputStream is = J2DEngine.class.getResourceAsStream(loadBase + name);
+		InputStream is = Java2DEngine.class.getResourceAsStream(loadBase + name);
 		if (is == null) {
-			is = J2DEngine.class.getResourceAsStream(loadBase + name + ".png");
+			is = Java2DEngine.class.getResourceAsStream(loadBase + name + ".png");
 		}
 		if (is == null) {
-			is = J2DEngine.class.getResourceAsStream(loadBase + name + ".jpg");
+			is = Java2DEngine.class.getResourceAsStream(loadBase + name + ".jpg");
 		}
 		if (is == null) {
 			return null;

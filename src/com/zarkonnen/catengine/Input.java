@@ -14,5 +14,8 @@ public interface Input {
 	public Input setMode(ScreenMode mode);
 	public ArrayList<ScreenMode> modes();
 	
+	public boolean isCursorVisible();
+	public Input setCursorVisible(boolean visible);
+	
 	public void quit();
 }

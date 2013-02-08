@@ -1,16 +1,17 @@
-package com.zarkonnen.catengine.slick;
+package com.zarkonnen.catengine;
 
 import com.zarkonnen.catengine.Engine;
 import com.zarkonnen.catengine.Frame;
 import com.zarkonnen.catengine.util.Clr;
 import com.zarkonnen.catengine.util.Pt;
+import com.zarkonnen.catengine.util.Rect;
 import com.zarkonnen.catengine.util.ScreenMode;
 import java.io.InputStream;
 import java.util.ArrayList;
 import org.newdawn.slick.*;
 
 public class SlickEngine extends BasicGame implements Engine {
-	public SlickEngine(String title, String loadBase, int fps) {
+	public SlickEngine(String title, String loadBase, Integer fps) {
 		super(title);
 		this.loadBase = loadBase;
 		this.fps = fps;
@@ -19,8 +20,9 @@ public class SlickEngine extends BasicGame implements Engine {
 	int fps;
 	String loadBase;
 	AppGameContainer agc;
-	com.zarkonnen.catengine.Game g;
+	Game g;
 	boolean fullscreen;
+	boolean cursorVisible = true;
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
@@ -61,7 +63,7 @@ public class SlickEngine extends BasicGame implements Engine {
 		@Override
 		public boolean keyDown(String key) {
 			try {
-				return gc.getInput().isKeyDown(Input.class.getField("KEY_" + key).getInt(null));
+				return gc.getInput().isKeyDown(org.newdawn.slick.Input.class.getField("KEY_" + key).getInt(null));
 			} catch (Exception e) {
 				return false;
 			}
@@ -98,10 +100,12 @@ public class SlickEngine extends BasicGame implements Engine {
 		}
 
 		@Override
-		public com.zarkonnen.catengine.Input setMode(ScreenMode mode) {
+		public Input setMode(ScreenMode mode) {
 			try {
+				gc.setMouseGrabbed(false);
 				agc.setDisplayMode(mode.width, mode.height, mode.fullscreen);
 				fullscreen = mode.fullscreen;
+				setCursorVisible(cursorVisible);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -122,6 +126,18 @@ public class SlickEngine extends BasicGame implements Engine {
 		public void quit() {
 			gc.exit();
 		}
+
+		@Override
+		public boolean isCursorVisible() {
+			return cursorVisible;
+		}
+
+		@Override
+		public com.zarkonnen.catengine.Input setCursorVisible(boolean visible) {
+			cursorVisible = visible;
+			gc.setMouseGrabbed(!visible);
+			return this;
+		}
 	}
 
 	private class MyFrame implements Frame {
@@ -140,7 +156,7 @@ public class SlickEngine extends BasicGame implements Engine {
 		}
 
 		@Override
-		public Frame rect(Clr c, double x, double y, double width, double height, double angle) {
+		public Rect rect(Clr c, double x, double y, double width, double height, double angle) {
 			g.setColor(new Color(c.r, c.g, c.b, c.a));
 			if (angle == 0) {
 				g.fillRect((float) x, (float) y, (float) width, (float) height);
@@ -151,13 +167,13 @@ public class SlickEngine extends BasicGame implements Engine {
 				g.rotate(0, 0, (float) - (angle * 180 / Math.PI));
 				g.translate((float) -x, (float) -y);
 			}
-			return this;
+			return new Rect(x, y, width, height);
 		}
 
 		@Override
-		public Frame blit(String img, Clr tint, double x, double y, double width, double height, double angle) {
+		public Rect blit(String img, Clr tint, double x, double y, double width, double height, double angle) {
 			Image image = getImage(img);
-			if (image == null) { return this; }
+			if (image == null) { return null; }
 			g.translate((float) x, (float) y);
 			if (angle != 0) { g.rotate(0, 0, (float) (angle * 180 / Math.PI)); }
 			if (tint != null && tint.a != 255) {
@@ -174,7 +190,7 @@ public class SlickEngine extends BasicGame implements Engine {
 			}
 			if (angle != 0) { g.rotate(0, 0, (float) - (angle * 180 / Math.PI)); }
 			g.translate((float) -x, (float) -y);
-			return this;
+			return new Rect(x, y, width == 0 ? image.getWidth() : width, height == 0 ? image.getHeight() : height);
 		}
 
 		private Image getImage(String name) {

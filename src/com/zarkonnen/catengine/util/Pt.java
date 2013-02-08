@@ -12,7 +12,9 @@ public final class Pt {
 	@Override
 	public boolean equals(Object o2) {
 		if (!(o2 instanceof Pt)) { return false; }
-		return this.x == ((Pt) o2).x && this.x == ((Pt) o2).y;
+		return
+				x == ((Pt) o2).x && 
+				y == ((Pt) o2).y;
 	}
 
 	@Override

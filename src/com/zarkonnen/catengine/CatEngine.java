@@ -1,14 +1,21 @@
 package com.zarkonnen.catengine;
 
-import com.zarkonnen.catengine.java2d.J2DEngine;
-import com.zarkonnen.catengine.slick.SlickEngine;
 import com.zarkonnen.catengine.util.Clr;
 import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.ScreenMode;
+import javax.swing.JOptionPane;
 
 public class CatEngine {
 	public static void main(String[] args) {
-		Engine e = new SlickEngine("Example", "/com/zarkonnen/catengine/images/", 60);//new J2DEngine("Example", "/com/zarkonnen/catengine/images/", 30);
+		int choice = JOptionPane.showOptionDialog(null, "Choose an implementation.", "CatEngine!", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, EngineFactory.defaultEngines(), EngineFactory.defaultEngines()[0]);
+		if (choice == -1) { return; }
+		Engine e = null;
+		try {
+			e = EngineFactory.make(EngineFactory.defaultEngines()[choice], "CatEngine!", "/com/zarkonnen/catengine/images/", 30);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return;
+		}
 		e.run(new Game() {
 			Pt cursor = new Pt(0, 0);
 			int i = 0;
@@ -43,14 +50,17 @@ public class CatEngine {
 					}
 				}
 				if (in.keyDown("Q")) { in.quit(); return; }
+				if (in.keyDown("C")) {
+					in.setCursorVisible(!in.isCursorVisible());
+				}
 			}
 
 			@Override
 			public void render(Frame f) {
 				ScreenMode sm = f.mode();
-				f.rect(Clr.BLACK, 0, 0, sm.width, sm.height, 0).
-						rect(Clr.RED, cursor.x, cursor.y, 10, 10, (Math.PI * 2 * i) / 100).
-						blit("cat.jpg", new Clr(0, 255, 0, i % 255), (i * 3) % sm.width, (i * 10) % sm.height, 0, 0, (Math.PI * 2 * i) / 1000);
+				f.rect(Clr.BLACK, 0, 0, sm.width, sm.height, 0);
+				f.rect(Clr.RED, cursor.x, cursor.y, 10, 10, (Math.PI * 2 * i) / 100);
+				f.blit("cat.jpg", new Clr(0, 255, 0, i % 255), (i * 3) % sm.width, (i * 10) % sm.height, 0, 0, (Math.PI * 2 * i) / 1000);
 			}
 		});
 	}
