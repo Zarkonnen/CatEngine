@@ -7,8 +7,11 @@ import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.Rect;
 import com.zarkonnen.catengine.util.ScreenMode;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.newdawn.slick.*;
+import org.newdawn.slick.opengl.renderer.Renderer;
 
 public class SlickEngine extends BasicGame implements Engine {
 	public SlickEngine(String title, String loadBase, Integer fps) {
@@ -23,6 +26,8 @@ public class SlickEngine extends BasicGame implements Engine {
 	Game g;
 	boolean fullscreen;
 	boolean cursorVisible = true;
+	HashMap<String, SoftReference<Image>> images = new HashMap<String, SoftReference<Image>>();
+
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
@@ -203,6 +208,16 @@ public class SlickEngine extends BasicGame implements Engine {
 		}
 
 		private Image getImage(String name) {
+			if (images.containsKey(name)) {
+				Image img = images.get(name).get();
+				if (img != null) { return img; }
+			}
+			Image img = loadImage(name);
+			images.put(name, new SoftReference<Image>(img));
+			return img;
+		}
+		
+		private Image loadImage(String name) {
 			InputStream is = SlickEngine.class.getResourceAsStream(loadBase + name);
 			if (is == null) {
 				is = SlickEngine.class.getResourceAsStream(loadBase + name + ".png");
