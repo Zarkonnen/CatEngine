@@ -2,6 +2,8 @@ package com.zarkonnen.catengine.java2d;
 
 import com.zarkonnen.catengine.Engine;
 import com.zarkonnen.catengine.Frame;
+import com.zarkonnen.catengine.Game;
+import com.zarkonnen.catengine.Input;
 import com.zarkonnen.catengine.util.Clr;
 import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.ScreenMode;
@@ -40,6 +42,7 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 	DisplayMode originalMode;
 	int msPerFrame;
 	long lastFrame;
+	boolean quitted = false;
 
 	public J2DEngine(String winTitle, String loadBase, int frameRate) {
 		this.winTitle = winTitle;
@@ -47,8 +50,7 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 		this.msPerFrame = 1000 / frameRate;
 	}
 
-	@Override
-	public Frame next() {
+	public MyFrame next() {
 		if (lastFrame != 0) {
 			canvas.getBufferStrategy().show();
 			long nextFrame = lastFrame + msPerFrame * 1000000;
@@ -69,7 +71,6 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 		return new MyFrame(f);
 	}
 
-	@Override
 	public void start() {
 		inputFrame = new InputFrame();
 		gameFrame = new JFrame(winTitle);
@@ -95,12 +96,22 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 		originalMode = config.getDevice().getDisplayMode();
 	}
 
-	@Override
 	public void quit() {
 		quitMe();
 	}
 	
-	void quitMe() { gameFrame.dispose(); }
+	void quitMe() { gameFrame.dispose(); quitted = true; }
+
+	@Override
+	public void run(Game g) {
+		start();
+		while (!quitted) {
+			MyFrame f = next();
+			g.input(f);
+			if (quitted) { return; }
+			g.render(f);
+		}
+	}
 
 	static class InputFrame {
 		Point mouse = new Point(0, 0);
@@ -109,7 +120,7 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 		HashSet<String> keys = new HashSet<String>();
 	}
 
-	class MyFrame implements Frame {
+	class MyFrame implements Frame, Input {
 		InputFrame input;
 		Graphics2D g;
 
@@ -144,7 +155,7 @@ public class J2DEngine implements Engine, KeyListener, MouseListener, MouseMotio
 		}
 
 		@Override
-		public Frame setMode(ScreenMode mode) {
+		public Input setMode(ScreenMode mode) {
 			config.getDevice().setFullScreenWindow(null);
 			if (mode.fullscreen) {
 				if (!fullscreen) {
