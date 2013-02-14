@@ -39,6 +39,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 	Game g;
 	String winTitle;
 	final String loadBase;
+	final String soundLoadBase;
 	boolean fullscreen = false;
 	JFrame gameFrame;
 	Canvas canvas;
@@ -52,9 +53,10 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 	boolean cursorVisible = true;
 	LinkedList<Long> frameIntervalWindow = new LinkedList<Long>();
 
-	public Java2DEngine(String winTitle, String loadBase, Integer frameRate) {
+	public Java2DEngine(String winTitle, String loadBase, String soundLoadBase, Integer frameRate) {
 		this.winTitle = winTitle;
 		this.loadBase = loadBase;
+		this.soundLoadBase = soundLoadBase;
 		this.msPerFrame = 1000 / frameRate;
 	}
 
@@ -79,6 +81,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 			f = inputFrame;
 			inputFrame = new InputFrame();
 			inputFrame.mouse = f.mouse;
+			inputFrame.keyDowns = new HashSet<String>(f.keyDowns);
 		}
 		return new MyFrame(f);
 	}
@@ -127,7 +130,8 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		Point mouse = new Point(0, 0);
 		Point click = null;
 		int button;
-		HashSet<String> keys = new HashSet<String>();
+		HashSet<String> keyDowns = new HashSet<String>();
+		HashSet<String> keyPresseds = new HashSet<String>();
 	}
 
 	class MyFrame implements Frame, Input {
@@ -137,7 +141,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		public MyFrame(InputFrame input) {
 			this.input = input;
 			g = (Graphics2D) canvas.getBufferStrategy().getDrawGraphics();
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 		}
 		
@@ -154,7 +158,12 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 		
 		@Override
 		public boolean keyDown(String key) {
-			return input.keys.contains(key);
+			return input.keyDowns.contains(key);
+		}
+		
+		@Override
+		public boolean keyPressed(String key) {
+			return input.keyPresseds.contains(key);
 		}
 
 		@Override
@@ -302,6 +311,21 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 			}
 			return this;
 		}
+
+		@Override
+		public void play(String sound, double pitch, double volume, double x, double y) {
+			// qqDPS TODO
+		}
+
+		@Override
+		public void playMusic(String music, double volume, MusicDone callback) {
+			// qqDPS TODO
+		}
+
+		@Override
+		public void stopMusic() {
+			// qqDPS TODO
+		}
 	}
 	
 	BufferedImage getImage(String name, Clr tint) {
@@ -398,7 +422,8 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 
 	@Override
 	public synchronized void keyPressed(KeyEvent ke) {
-		inputFrame.keys.add(KeyEvent.getKeyText(ke.getKeyCode()));
+		inputFrame.keyDowns.add(KeyEvent.getKeyText(ke.getKeyCode()));
+		inputFrame.keyPresseds.add(KeyEvent.getKeyText(ke.getKeyCode()));
 	}
 	
 	@Override
@@ -416,7 +441,9 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 	public void keyTyped(KeyEvent ke) {}
 
 	@Override
-	public void keyReleased(KeyEvent ke) {}
+	public void keyReleased(KeyEvent ke) {
+		inputFrame.keyDowns.remove(KeyEvent.getKeyText(ke.getKeyCode()));
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent me) {}
@@ -431,5 +458,7 @@ public class Java2DEngine implements Engine, KeyListener, MouseListener, MouseMo
 	public void mouseExited(MouseEvent me) {}
 
 	@Override
-	public void mouseDragged(MouseEvent me) {}
+	public void mouseDragged(MouseEvent me) {
+		inputFrame.mouse = me.getPoint();
+	}
 }

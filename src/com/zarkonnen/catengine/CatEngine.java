@@ -13,7 +13,7 @@ public class CatEngine {
 		if (choice == -1) { return; }
 		Engine e = null;
 		try {
-			e = EngineFactory.make(EngineFactory.defaultEngines()[choice], "CatEngine!", "/com/zarkonnen/catengine/images/", 30);
+			e = EngineFactory.make(EngineFactory.defaultEngines()[choice], "CatEngine!", "/com/zarkonnen/catengine/images/", "/com/zarkonnen/catengine/sounds/", 30);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return;

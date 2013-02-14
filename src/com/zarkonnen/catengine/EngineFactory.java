@@ -8,7 +8,7 @@ public class EngineFactory {
 		return new String[] {"Slick", "Java2D"};
 	}
 	
-	public static Engine make(String impl, String title, String loadBase, int fps) throws InstantiationException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public static Engine make(String impl, String title, String loadBase, String soundLoadBase, int fps) throws InstantiationException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Class c = null;
 		try { c = Class.forName(impl); } catch (Exception e) {}
 		if (c == null) { try { c = Class.forName("com.zarkonnen.catengine." + impl); } catch (Exception e) {} }
@@ -16,6 +16,6 @@ public class EngineFactory {
 		if (c == null) { try { c = Class.forName("com.zarkonnen.catengine." + impl + "Engine"); } catch (Exception e) {} }
 		if (c == null) { try { c = Class.forName("com.zarkonnen.catengine." + impl.toLowerCase() + "." + impl + "Engine"); } catch (Exception e) {} }
 		if (c == null) { return null; }
-		return (Engine) c.getConstructor(String.class, String.class, Integer.class).newInstance(title, loadBase, fps);
+		return (Engine) c.getConstructor(String.class, String.class, String.class, Integer.class).newInstance(title, loadBase, soundLoadBase, fps);
 	}
 }

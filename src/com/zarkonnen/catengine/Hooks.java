@@ -2,7 +2,6 @@ package com.zarkonnen.catengine;
 
 import static com.zarkonnen.catengine.util.Utils.*;
 
-
 import com.zarkonnen.catengine.util.Rect;
 import java.util.ArrayList;
 
@@ -28,7 +27,8 @@ public class Hooks {
 				clickDone = true;
 				h.b.run(in, h.a.relative(in.click()));
 			}
-			if (clickDone && hoverDone) { return; }
+			if (clickDone && hoverDone) { list.clear(); return; }
 		}
+		list.clear();
 	}
 }

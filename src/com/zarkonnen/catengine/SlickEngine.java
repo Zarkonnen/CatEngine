@@ -14,21 +14,25 @@ import org.newdawn.slick.*;
 import org.newdawn.slick.opengl.renderer.Renderer;
 
 public class SlickEngine extends BasicGame implements Engine {
-	public SlickEngine(String title, String loadBase, Integer fps) {
+	public SlickEngine(String title, String loadBase, String soundLoadBase, Integer fps) {
 		super(title);
 		this.loadBase = loadBase;
+		this.soundLoadBase = soundLoadBase;
 		this.fps = fps;
 	}
 	
 	int fps;
+	Music currentMusic;
 	String loadBase;
+	String soundLoadBase;
 	MyAppGameContainer agc;
 	Game g;
 	boolean fullscreen;
 	boolean cursorVisible = true;
-	HashMap<String, SoftReference<Image>> images = new HashMap<String, SoftReference<Image>>();
-
-
+	final HashMap<String, SoftReference<Image>> images = new HashMap<String, SoftReference<Image>>();
+	final HashMap<String, SoftReference<Music>> musics = new HashMap<String, SoftReference<Music>>();
+	final HashMap<String, ArrayList<SoftReference<Sound>>> sounds = new HashMap<String, ArrayList<SoftReference<Sound>>>();
+	
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		gc.setTargetFrameRate(fps);
@@ -49,7 +53,6 @@ public class SlickEngine extends BasicGame implements Engine {
 	@Override
 	public void setup(com.zarkonnen.catengine.Game g) {
 		this.g = g;
-		this.g = g;
 		try {
 			agc = new MyAppGameContainer(this);
 			agc.setDisplayMode(800, 600, false);
@@ -61,7 +64,7 @@ public class SlickEngine extends BasicGame implements Engine {
 	
 	class MyAppGameContainer extends AppGameContainer {
 		public MyAppGameContainer(org.newdawn.slick.Game game) throws SlickException {
-			super(game);
+			super(game, 800, 600, false);
 			setup();
 			getDelta();
 		}
@@ -108,6 +111,16 @@ public class SlickEngine extends BasicGame implements Engine {
 				return false;
 			}
 		}
+		
+		
+		@Override
+		public boolean keyPressed(String key) {
+			try {
+				return gc.getInput().isKeyPressed(org.newdawn.slick.Input.class.getField("KEY_" + key).getInt(null));
+			} catch (Exception e) {
+				return false;
+			}
+		}
 
 		@Override
 		public Pt cursor() {
@@ -116,7 +129,7 @@ public class SlickEngine extends BasicGame implements Engine {
 
 		@Override
 		public Pt click() {
-			for (int i = 3; i > 0; i--) {
+			for (int i = 3; i >= 0; i--) {
 				if (gc.getInput().isMouseButtonDown(i)) {
 					return cursor();
 				}
@@ -126,9 +139,9 @@ public class SlickEngine extends BasicGame implements Engine {
 
 		@Override
 		public int clickButton() {
-			for (int i = 3; i > 0; i--) {
+			for (int i = 3; i >= 0; i--) {
 				if (gc.getInput().isMouseButtonDown(i)) {
-					return i;
+					return i + 1;
 				}
 			}
 			return 0;
@@ -178,6 +191,99 @@ public class SlickEngine extends BasicGame implements Engine {
 			gc.setMouseGrabbed(!visible);
 			return this;
 		}
+
+		@Override
+		public void play(String sound, double pitch, double volume, double x, double y) {
+			try {
+				getSound(sound).playAt((float) pitch, (float) volume, (float) x, (float) y, 0);
+			} catch (SlickException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		private Sound getSound(String sound) throws SlickException {
+			if (!sound.contains(".")) { sound += ".ogg"; }
+			if (!sounds.containsKey(sound)) {
+				sounds.put(sound, new ArrayList<SoftReference<Sound>>());
+			}
+			ArrayList<SoftReference<Sound>> l = sounds.get(sound);
+			for (SoftReference<Sound> entry : l) {
+				Sound snd = entry.get();
+				if (snd != null && !snd.playing()) {
+					return snd;
+				}
+			}
+			
+			for (int i = 0; i < l.size(); i++) {
+				Sound snd = l.get(i).get();
+				if (snd == null) {
+					snd = new Sound(SlickEngine.class.getResource(soundLoadBase + sound));
+					l.set(i, new SoftReference<Sound>(snd));
+					return snd;
+				}
+			}
+			
+			Sound snd = new Sound(SlickEngine.class.getResource(soundLoadBase + sound));
+			l.add(new SoftReference<Sound>(snd));
+			return snd;
+		}
+		
+		private Music getMusic(String music) throws SlickException {
+			synchronized (musics) {
+				if (!music.contains(".")) { music += ".ogg"; }
+				if (musics.containsKey(music)) {
+					SoftReference<Music> sr = musics.get(music);
+					Music m = sr.get();
+					if (m != null) {
+						return m;
+					}
+				}
+				Music m = new Music(SlickEngine.class.getResource(soundLoadBase + music));
+				musics.put(music, new SoftReference<Music>(m));
+				return m;
+			}
+		}
+
+		@Override
+		public void playMusic(final String music, final double volume, final MusicDone callback) {
+			new Thread("MusicStarter") {
+				@Override
+				public void run() {
+					try {
+						synchronized (musics) {
+							stopMusic();
+							currentMusic = getMusic(music);
+							currentMusic.play(1.0f, (float) volume);
+							currentMusic.addListener(new MusicListener() {
+								@Override
+								public void musicEnded(Music m) {
+									if (m == currentMusic && callback != null) {
+										callback.run(music, volume);
+									}
+								}
+
+								@Override
+								public void musicSwapped(Music oldM, Music newM) {
+									// Ignore.
+								}
+							});
+						}
+					} catch (SlickException e) {
+						e.printStackTrace();
+					}
+				}
+			}.start();
+		}
+
+		@Override
+		public void stopMusic() {
+			synchronized (musics) {
+				if (currentMusic != null && currentMusic.playing()) {
+					currentMusic.stop();
+					currentMusic = null;
+				}
+			}
+		}
 	}
 
 	private class MyFrame implements Frame {
@@ -211,6 +317,7 @@ public class SlickEngine extends BasicGame implements Engine {
 				g.rotate(0, 0, (float) - (angle * 180 / Math.PI));
 				g.translate((float) -x, (float) -y);
 			}
+			g.setColor(Color.white);
 			return new Rect(x, y, width, height);
 		}
 
@@ -224,16 +331,16 @@ public class SlickEngine extends BasicGame implements Engine {
 				if (width == 0 && height == 0) {
 					g.drawImage(image, 0, 0);
 				} else {
-					g.drawImage(image, (float) x, (float) y, (float) (x + width), (float) (y + height), 0f, 0f, image.getWidth(), image.getHeight());
+					g.drawImage(image, 0f, 0f, (float) (width), (float) (height), 0f, 0f, image.getWidth(), image.getHeight());
 				}
 			}
 			if (width == 0 && height == 0) {
 				g.drawImage(image, 0, 0, tint == null ? null : new Color(tint.r, tint.g, tint.b, tint.a));
 			} else {
 				if (tint == null) {
-					g.drawImage(image, (float) x, (float) y, (float) (x + width), (float) (y + height), 0f, 0f, image.getWidth(), image.getHeight());
+					g.drawImage(image, 0f, 0f, (float) (width), (float) (height), 0f, 0f, image.getWidth(), image.getHeight());
 				} else {
-					g.drawImage(image, (float) x, (float) y, (float) (x + width), (float) (y + height), 0f, 0f, image.getWidth(), image.getHeight(), new Color(tint.r, tint.g, tint.b, tint.a));
+					g.drawImage(image, 0f, 0f, (float) (width), (float) (height), 0f, 0f, image.getWidth(), image.getHeight(), new Color(tint.r, tint.g, tint.b, tint.a));
 				}
 			}
 			g.setColor(Color.white);
