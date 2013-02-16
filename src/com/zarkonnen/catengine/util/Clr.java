@@ -1,5 +1,7 @@
 package com.zarkonnen.catengine.util;
 
+import java.util.HashMap;
+
 public final class Clr {
 	public int r, g, b, a;
 
@@ -81,4 +83,20 @@ public final class Clr {
 	public static final Clr YELLOW = new Clr(255, 255, 0);
 	public static final Clr MAGENTA = new Clr(255, 0, 255);
 	public static final Clr CYAN = new Clr(0, 255, 255);
+	
+	public static final HashMap<String, Clr> COLORS = new HashMap<String, Clr>();
+	static {
+		COLORS.put("BLACK", BLACK);
+		COLORS.put("WHITE", WHITE);
+		COLORS.put("RED", RED);
+		COLORS.put("GREEN", GREEN);
+		COLORS.put("BLUE", BLUE);
+		COLORS.put("YELLOW", YELLOW);
+		COLORS.put("MAGENTA", MAGENTA);
+		COLORS.put("CYAN", CYAN);
+	}
+	
+	public static Clr getNamedColor(String name) {
+		return COLORS.get(name);
+	}
 }

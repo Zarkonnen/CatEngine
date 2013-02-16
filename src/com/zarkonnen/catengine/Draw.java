@@ -228,7 +228,7 @@ public class Draw {
 							}
 							if (symC == null) {
 								try {
-									symC = (Clr) Clr.class.getField(tintN).get(null);
+									symC = Clr.getNamedColor(tintN);
 								} catch (Exception e) {
 									// Ignore
 									e.printStackTrace();
@@ -304,12 +304,7 @@ public class Draw {
 							}
 						}
 						if (newC == null) {
-							try {
-								newC = (Clr) Clr.class.getField(tintN).get(null);
-							} catch (Exception e) {
-								// Ignore
-								e.printStackTrace();
-							}
+							newC = Clr.getNamedColor(tintN);
 						}
 					}
 					if (bg) {

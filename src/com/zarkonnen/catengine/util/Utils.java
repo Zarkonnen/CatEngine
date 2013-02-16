@@ -13,13 +13,6 @@ import java.util.Map;
 public class Utils {
 	private Utils() {}
 
-	/** @return The folder the game jar is in. */
-	public static File getGameFolder() throws Exception {
-		return new File(
-				Utils.class.getProtectionDomain().getCodeSource().getLocation().toURI()).
-				getAbsoluteFile().getParentFile();
-	}
-
 	/** @return Immutable list of items. */
 	public static <T> List<T> l(T... ts) {
 		return immute(Arrays.asList(ts));

@@ -28,4 +28,9 @@ public final class ScreenMode {
 				((ScreenMode) o2).height == height &&
 				((ScreenMode) o2).fullscreen == fullscreen;
 	}
+	
+	@Override
+	public String toString() {
+		return width + "x" + height + (fullscreen ? " Fullscreen" : " Windowed");
+	}
 }
