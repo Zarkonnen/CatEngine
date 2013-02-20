@@ -10,10 +10,17 @@ public abstract class Hook {
 		MOUSE_3
 	}
 
-	public Hook(Type type) {
-		this.type = type;
+	public Hook(Type... type) {
+		this.types = type;
 	}
 	
-	public final Type type;
-	public abstract void run(Input in, Pt p);
+	public boolean ofType(Hook.Type type) {
+		for (Type t : types) {
+			if (type == t) { return true; }
+		}
+		return false;
+	}
+	
+	public final Type[] types;
+	public abstract void run(Input in, Pt p, Type type);
 }

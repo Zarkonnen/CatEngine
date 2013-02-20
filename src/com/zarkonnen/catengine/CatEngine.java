@@ -93,7 +93,7 @@ public class CatEngine {
 				String green2 = "" + i % 10;
 				Hook hook = new Hook(Hook.Type.HOVER) {
 					@Override
-					public void run(Input in, Pt p) {
+					public void run(Input in, Pt p, Hook.Type type) {
 						catness = true;
 					}
 				};

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public interface Input {
 	public boolean keyDown(String key);
 	public boolean keyPressed(String key);
+	public String lastKeyPressed();
 	public Pt cursor();
 	public Pt click();
 	public int clickButton();

@@ -138,6 +138,7 @@ public class Draw {
 		char[] cs = text.toCharArray();
 		Clr bgC = null;
 		Clr tintC = null;
+		Clr defaultTintC = null;
 		
 		String hookText = null;
 		double hookX = 0, hookY = 0;
@@ -260,6 +261,8 @@ public class Draw {
 					if (tintN.startsWith("!")) {
 						if (tintN.equals("!")) {
 							if (hookText != null) {
+								//System.out.println(text);
+								//System.out.println(new Rect(hookX, hookY, x + (c) * fount.displayWidth - hookX, y + r * fount.height + fount.height - hookY));
 								hs.add(new Rect(hookX, hookY, x + (c) * fount.displayWidth - hookX, y + r * fount.height + fount.height - hookY), hooksForStrings.get(hookText));
 								hookText = null;
 							}
@@ -273,10 +276,15 @@ public class Draw {
 						continue;
 					}
 					
+					boolean def = false;
 					boolean bg = false;
 					if (tintN.startsWith("bg=")) {
 						bg = true;
 						tintN = tintN.substring(3);
+					}
+					if (tintN.startsWith("default=")) {
+						def = true;
+						tintN = tintN.substring("default=".length());
 					}
 					Clr newC = null;
 					if (!tintN.isEmpty()) {
@@ -306,9 +314,13 @@ public class Draw {
 						if (newC == null) {
 							newC = Clr.getNamedColor(tintN);
 						}
+					} else if (!bg) {
+						newC = defaultTintC;
 					}
 					if (bg) {
 						bgC = newC;
+					} else if (def) {
+						defaultTintC = newC;
 					} else {
 						tintC = newC;
 					}

@@ -1,28 +1,31 @@
 package com.zarkonnen.catengine.util;
 
-public final class Pt implements Shp<Pt> {
-	public final double x;
-	public final double y;
+public final class Ln implements Shp<Ln> {
+	public final Pt start;
+	public final Pt end;
 
-	public Pt(double x, double y) {
-		this.x = x;
-		this.y = y;
+	public Ln(Pt start, Pt end) {
+		this.start = start;
+		this.end = end;
+	}
+	
+	public Ln(double startX, double startY, double endX, double endY) {
+		this(new Pt(startX, startY), new Pt(endX, endY));
 	}
 	
 	@Override
 	public boolean equals(Object o2) {
-		if (!(o2 instanceof Pt)) { return false; }
-		return
-				x == ((Pt) o2).x && 
-				y == ((Pt) o2).y;
+		if (!(o2 instanceof Ln)) { return false; }
+		return ((Ln) o2).start.equals(start) && ((Ln) o2).end.equals(end);
 	}
-
+	
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 53 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
-		hash = 53 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
-		return hash;
+		return start.hashCode() + 53 * end.hashCode();
+	}
+	
+	public Ln reversed() {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
@@ -60,30 +63,42 @@ public final class Pt implements Shp<Pt> {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	
-	public Angle angle(Pt p2) {
+	public Angle angle() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	
-	public Pt between(double fraction, Pt p2) {
+	public Angle angleVs(Ln l2) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	
-	public Pt towards(double dist, Pt goal) {
+	public boolean parallel(Ln l2) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	public boolean perpendicular(Ln l2) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	public Pt intersection(Ln l2) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	public Pt[] intersections(Rect r2) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public Pt shifted(double dx, double dy) {
+	public Ln shifted(double dx, double dy) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public Pt shifted(Delta d) {
+	public Ln shifted(Delta d) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
-	public Pt scaled(boolean fromCenter, double scale) {
+	public Ln scaled(boolean fromCenter, double scale) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

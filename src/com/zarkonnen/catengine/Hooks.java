@@ -19,13 +19,13 @@ public class Hooks {
 		boolean clickDone = false;
 		for (int i = list.size() - 1; i >= 0; i--) {
 			Pair<Rect, Hook> h = list.get(i);
-			if (!hoverDone && h.b.type == Hook.Type.HOVER && h.a.contains(in.cursor())) {
+			if (!hoverDone && h.b.ofType(Hook.Type.HOVER) && h.a.contains(in.cursor())) {
 				hoverDone = true;
-				h.b.run(in, h.a.relative(in.cursor()));
+				h.b.run(in, h.a.relative(in.cursor()), Hook.Type.HOVER);
 			}
-			if (!clickDone && h.b.type.ordinal() == in.clickButton() && h.a.contains(in.click())) {
+			if (!clickDone && h.b.ofType(Hook.Type.values()[in.clickButton()]) && h.a.contains(in.click())) {
 				clickDone = true;
-				h.b.run(in, h.a.relative(in.click()));
+				h.b.run(in, h.a.relative(in.click()), Hook.Type.values()[in.clickButton()]);
 			}
 			if (clickDone && hoverDone) { list.clear(); return; }
 		}
