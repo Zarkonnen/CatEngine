@@ -22,37 +22,87 @@ public class Draw {
 	}
 	
 	public Draw blit(String img, double x, double y) {
-		f.blit(img, null, x, y, 0, 0, 0);
+		f.blit(img, null, x, y, 0, 0, 0, 0, 0, 0, 0, false);
 		return this;
 	}
 	
 	public Draw blit(String img, double x, double y, double angle) {
-		f.blit(img, null, x, y, 0, 0, angle);
+		f.blit(img, null, x, y, 0, 0, angle, 0, 0, 0, 0, false);
 		return this;
 	}
 	
 	public Draw blit(String img, Clr c, double x, double y) {
-		f.blit(img, c, x, y, 0, 0, 0);
+		f.blit(img, c, x, y, 0, 0, 0, 0, 0, 0, 0, false);
 		return this;
 	}
 	
 	public Draw blit(String img, double x, double y, double width, double height) {
-		f.blit(img, null, x, y, width, height, 0);
+		f.blit(img, null, x, y, width, height, 0, 0, 0, 0, 0, false);
 		return this;
 	}
 	
 	public Draw blit(String img, Clr c, double x, double y, double width, double height) {
-		f.blit(img, c, x, y, width, height, 0);
+		f.blit(img, c, x, y, width, height, 0, 0, 0, 0, 0, false);
+		return this;
+	}
+	
+	public Draw blit(String img, double x, double y, double width, double height, boolean flipped) {
+		f.blit(img, null, x, y, width, height, 0, 0, 0, 0, 0, flipped);
+		return this;
+	}
+	
+	public Draw blit(String img, Clr c, double x, double y, double width, double height, boolean flipped) {
+		f.blit(img, c, x, y, width, height, 0, 0, 0, 0, 0, flipped);
 		return this;
 	}
 	
 	public Draw blit(String img, Clr c, double x, double y, double angle) {
-		f.blit(img, c, x, y, 0, 0, angle);
+		f.blit(img, c, x, y, 0, 0, angle, 0, 0, 0, 0, false);
 		return this;
 	}
 	
 	public Draw blit(String img, Clr c, double x, double y, double width, double height, double angle) {
-		f.blit(img, c, x, y, width, height, angle);
+		f.blit(img, c, x, y, width, height, angle, 0, 0, 0, 0, false);
+		return this;
+	}
+	
+	public Draw blit(String img, Clr c, double x, double y, double width, double height, double angle, boolean flipped) {
+		f.blit(img, c, x, y, width, height, angle, 0, 0, 0, 0, flipped);
+		return this;
+	}
+	
+	public Draw blit(Img img, double x, double y) {
+		f.blit(img.src, null, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
+		return this;
+	}
+	
+	public Draw blit(Img img, double x, double y, double angle) {
+		f.blit(img.src, null, x, y, 0, 0, angle, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
+		return this;
+	}
+	
+	public Draw blit(Img img, Clr c, double x, double y) {
+		f.blit(img.src, c, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
+		return this;
+	}
+	
+	public Draw blit(Img img, double x, double y, double width, double height) {
+		f.blit(img.src, null, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
+		return this;
+	}
+	
+	public Draw blit(Img img, Clr c, double x, double y, double width, double height) {
+		f.blit(img.src, c, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
+		return this;
+	}
+	
+	public Draw blit(Img img, Clr c, double x, double y, double angle) {
+		f.blit(img.src, c, x, y, 0, 0, angle, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
+		return this;
+	}
+	
+	public Draw blit(Img img, Clr c, double x, double y, double width, double height, double angle) {
+		f.blit(img.src, c, x, y, width, height, angle, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
 	
@@ -67,22 +117,62 @@ public class Draw {
 	}
 	
 	public Draw blit(String img, double x, double y, Hook hook) {
-		hs.add(f.blit(img, null, x, y, 0, 0, 0), hook);
+		hs.add(f.blit(img, null, x, y, 0, 0, 0, 0, 0, 0, 0, false), hook);
 		return this;
 	}
 	
 	public Draw blit(String img, Clr c, double x, double y, Hook hook) {
-		hs.add(f.blit(img, c, x, y, 0, 0, 0), hook);
+		hs.add(f.blit(img, c, x, y, 0, 0, 0, 0, 0, 0, 0, false), hook);
 		return this;
 	}
 	
 	public Draw blit(String img, double x, double y, double width, double height, Hook hook) {
-		hs.add(f.blit(img, null, x, y, width, height, 0), hook);
+		hs.add(f.blit(img, null, x, y, width, height, 0, 0, 0, 0, 0, false), hook);
 		return this;
 	}
 	
 	public Draw blit(String img, Clr c, double x, double y, double width, double height, Hook hook) {
-		hs.add(f.blit(img, c, x, y, width, height, 0), hook);
+		hs.add(f.blit(img, c, x, y, width, height, 0, 0, 0, 0, 0, false), hook);
+		return this;
+	}
+	
+	public Draw blit(String img, double x, double y, boolean flipped, Hook hook) {
+		hs.add(f.blit(img, null, x, y, 0, 0, 0, 0, 0, 0, 0, flipped), hook);
+		return this;
+	}
+	
+	public Draw blit(String img, Clr c, double x, double y, boolean flipped, Hook hook) {
+		hs.add(f.blit(img, c, x, y, 0, 0, 0, 0, 0, 0, 0, flipped), hook);
+		return this;
+	}
+	
+	public Draw blit(String img, double x, double y, double width, double height, boolean flipped, Hook hook) {
+		hs.add(f.blit(img, null, x, y, width, height, 0, 0, 0, 0, 0, flipped), hook);
+		return this;
+	}
+	
+	public Draw blit(String img, Clr c, double x, double y, double width, double height, boolean flipped, Hook hook) {
+		hs.add(f.blit(img, c, x, y, width, height, 0, 0, 0, 0, 0, flipped), hook);
+		return this;
+	}
+	
+	public Draw blit(Img img, double x, double y, Hook hook) {
+		hs.add(f.blit(img.src, null, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
+		return this;
+	}
+	
+	public Draw blit(Img img, Clr c, double x, double y, Hook hook) {
+		hs.add(f.blit(img.src, c, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
+		return this;
+	}
+	
+	public Draw blit(Img img, double x, double y, double width, double height, Hook hook) {
+		hs.add(f.blit(img.src, null, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
+		return this;
+	}
+	
+	public Draw blit(Img img, Clr c, double x, double y, double width, double height, Hook hook) {
+		hs.add(f.blit(img.src, c, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
 		return this;
 	}
 	
@@ -131,7 +221,7 @@ public class Draw {
 			text = text.replace(sub.getKey(), "[!" + sub.getKey() + "]" + sub.getKey() + "[!]");
 		}
 		int cols = maxWidth / fount.displayWidth;
-		int rows = maxHeight / fount.height;
+		int rows = maxHeight / fount.lineHeight;
 		int c = 0;
 		int r = 0;
 		int n = 0;
@@ -243,7 +333,7 @@ public class Draw {
 					
 					if (sym == null) { sym = nameS; }
 					int overhang = 0; // qqDPS
-					Rect imgSz = f.blit(sym, symC, x + (c) * fount.displayWidth, y + r * fount.height + overhang, 0, 0, 0);
+					Rect imgSz = f.blit(sym, symC, x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang, 0, 0, 0, 0, 0, 0, 0, false);
 					n = n2 + 1;
 					if (imgSz != null) {
 						hs.add(imgSz, hooksForStrings.get("{" + sym + "}"));
@@ -263,13 +353,13 @@ public class Draw {
 							if (hookText != null) {
 								//System.out.println(text);
 								//System.out.println(new Rect(hookX, hookY, x + (c) * fount.displayWidth - hookX, y + r * fount.height + fount.height - hookY));
-								hs.add(new Rect(hookX, hookY, x + (c) * fount.displayWidth - hookX, y + r * fount.height + fount.height - hookY), hooksForStrings.get(hookText));
+								hs.add(new Rect(hookX, hookY, x + (c) * fount.displayWidth - hookX, y + r * fount.lineHeight + fount.lineHeight - hookY), hooksForStrings.get(hookText));
 								hookText = null;
 							}
 						} else {
 							hookText = tintN.substring(1);
 							hookX = x + (c) * fount.displayWidth;
-							hookY = y + r * fount.height;
+							hookY = y + r * fount.lineHeight;
 						}
 						
 						n = n2 + 1;
@@ -328,18 +418,20 @@ public class Draw {
 					continue;
 				}
 			}
-			int codePt = Character.codePointAt(cs, n);
+			//int codePt = Character.codePointAt(cs, n);
 			if (bgC != null) {
-				f.rect(bgC, x + c * fount.displayWidth - (n == 0 ? -2 : 1), y + r * fount.height - 2,
-					fount.displayWidth, fount.height, 0);
+				f.rect(bgC, x + c * fount.displayWidth - (n == 0 ? -2 : 1), y + r * fount.lineHeight - 2,
+					fount.displayWidth, fount.lineHeight, 0);
 			}
-			f.blit(
-					fount.loadBase + codePt,
+			/*f.blit(
+					fount.img + codePt,
 					tintC,
-					x + c * fount.displayWidth, y + r * fount.height,
+					x + c * fount.displayWidth, y + r * fount.lineHeight,
 					0,
 					0,
-					0);
+					0
+					, 0, 0, 0, 0, false);*/
+			blit(fount.get(cs[n]), tintC, x + c * fount.displayWidth, y + r * fount.lineHeight);
 			c++;
 			n++;
 		}
@@ -351,7 +443,7 @@ public class Draw {
 		int heightReached = 0;
 		
 		int cols = maxWidth / fount.displayWidth;
-		int rows = maxHeight / fount.height;
+		int rows = maxHeight / fount.lineHeight;
 		int c = 0;
 		int r = 0;
 		int n = 0;
@@ -423,7 +515,7 @@ public class Draw {
 			}
 			int val = (int) cs[n];
 			widthReached = Math.max(widthReached, c * fount.displayWidth + fount.displayWidth);
-			heightReached = Math.max(heightReached, r * fount.height + fount.height);
+			heightReached = Math.max(heightReached, r * fount.lineHeight + fount.lineHeight);
 			c++;
 			n++;
 		}
