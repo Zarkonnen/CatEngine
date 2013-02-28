@@ -3,6 +3,7 @@ package com.zarkonnen.catengine.util;
 public interface Shp<T extends Shp> {
 	public Pt center();
 	public Rect bounds();
+	public Ln[] borders();
 	public boolean intersects(Shp s);
 	public boolean contains(Shp s);
 	public double centerDist(Shp s);
@@ -11,4 +12,5 @@ public interface Shp<T extends Shp> {
 	public T shifted(double dx, double dy);
 	public T shifted(Delta d);
 	public T scaled(boolean fromCenter, double scale);
+	public T quantized(double quantum);
 }

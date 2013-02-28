@@ -1,9 +1,11 @@
 package com.zarkonnen.catengine.util;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public final class Clr {
+public final class Clr implements Serializable {
 	public int r, g, b, a;
+	public transient Object machineColorCache;
 
 	public Clr(int r, int g, int b, int a) {
 		this.r = r;

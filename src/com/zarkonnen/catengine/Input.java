@@ -3,6 +3,7 @@ package com.zarkonnen.catengine;
 import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.ScreenMode;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Input {
 	public boolean keyDown(String key);
@@ -20,9 +21,11 @@ public interface Input {
 	public Input setCursorVisible(boolean visible);
 	
 	public void play(String sound, double pitch, double volume, double x, double y);
+	public void preloadSounds(List<String> sound, Runnable preloadDone);
 	
-	public void playMusic(String music, double volume, MusicDone doneCallback);
+	public void playMusic(String music, double volume, MusicCallback startedCallback, MusicCallback doneCallback);
 	public void stopMusic();
+	public void preloadMusic(List<String> music, Runnable preloadDone);
 	
 	public void quit();
 }

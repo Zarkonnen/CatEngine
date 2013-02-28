@@ -216,6 +216,8 @@ public class Draw {
 		return this;
 	}
 	
+	static HashMap<String, Clr> knownColors = new HashMap<String, Clr>();
+	
 	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands, Map<String, Hook> hooksForStrings) {
 		for (Map.Entry<String, Hook> sub : hooksForStrings.entrySet()) {
 			text = text.replace(sub.getKey(), "[!" + sub.getKey() + "]" + sub.getKey() + "[!]");
@@ -294,35 +296,17 @@ public class Draw {
 					if (nameS.startsWith("[") && nameS.contains("]")) {
 						String tintN = nameS.substring(1, nameS.indexOf("]"));
 						if (!tintN.isEmpty()) {
-							if (tintN.matches("[a-fA-F0-9]{6}")) {
-								try {
-									symC = new Clr(
-											Integer.parseInt(tintN.substring(0, 2), 16),
-											Integer.parseInt(tintN.substring(2, 4), 16),
-											Integer.parseInt(tintN.substring(4, 6), 16));
-								} catch (Exception e) {
-									// Ignore
-									e.printStackTrace();
-								}
-							}
-							if (tintN.matches("[a-fA-F0-9]{8}")) {
-								try {
-									symC = new Clr(
-											Integer.parseInt(tintN.substring(0, 2), 16),
-											Integer.parseInt(tintN.substring(2, 4), 16),
-											Integer.parseInt(tintN.substring(4, 6), 16),
-											Integer.parseInt(tintN.substring(6, 8), 16));
-								} catch (Exception e) {
-									// Ignore
-									e.printStackTrace();
+							symC = knownColors.get(tintN);
+							if (symC == null) {
+								symC = Clr.fromHex(tintN);
+								if (symC != null) {
+									knownColors.put(tintN, symC);
 								}
 							}
 							if (symC == null) {
-								try {
-									symC = Clr.getNamedColor(tintN);
-								} catch (Exception e) {
-									// Ignore
-									e.printStackTrace();
+								symC = Clr.getNamedColor(tintN);
+								if (symC != null) {
+									knownColors.put(tintN, symC);
 								}
 							}
 							if (symC != null) {
@@ -378,31 +362,18 @@ public class Draw {
 					}
 					Clr newC = null;
 					if (!tintN.isEmpty()) {
-						if (tintN.matches("[a-fA-F0-9]{6}")) {
-							try {
-								newC = new Clr(
-										Integer.parseInt(tintN.substring(0, 2), 16),
-										Integer.parseInt(tintN.substring(2, 4), 16),
-										Integer.parseInt(tintN.substring(4, 6), 16));
-							} catch (Exception e) {
-								// Ignore
-								e.printStackTrace();
-							}
-						}
-						if (tintN.matches("[a-fA-F0-9]{8}")) {
-							try {
-								newC = new Clr(
-										Integer.parseInt(tintN.substring(0, 2), 16),
-										Integer.parseInt(tintN.substring(2, 4), 16),
-										Integer.parseInt(tintN.substring(4, 6), 16),
-										Integer.parseInt(tintN.substring(6, 8), 16));
-							} catch (Exception e) {
-								// Ignore
-								e.printStackTrace();
+						newC = knownColors.get(tintN);
+						if (newC == null) {
+							newC = Clr.fromHex(tintN);
+							if (newC != null) {
+								knownColors.put(tintN, newC);
 							}
 						}
 						if (newC == null) {
 							newC = Clr.getNamedColor(tintN);
+							if (newC != null) {
+								knownColors.put(tintN, newC);
+							}
 						}
 					} else if (!bg) {
 						newC = defaultTintC;

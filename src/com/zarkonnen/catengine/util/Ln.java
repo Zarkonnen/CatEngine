@@ -23,24 +23,50 @@ public final class Ln implements Shp<Ln> {
 	public int hashCode() {
 		return start.hashCode() + 53 * end.hashCode();
 	}
-	
-	public Ln reversed() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 	@Override
 	public Pt center() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return center(start.x, start.y, end.x, end.y);
+	}
+	
+	public static Pt center(double startX, double startY, double endX, double endY) {
+		return new Pt(startX / 2 + endX / 2, startY / 2 + endY / 2);
 	}
 
 	@Override
 	public Rect bounds() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return bounds(start.x, start.y, end.x, end.y);
+	}
+	
+	public static Rect bounds(double startX, double startY, double endX, double endY) {
+		return new Rect(Math.min(startX, endX), Math.min(startY, endY), Math.abs(startX - endX), Math.abs(startY - endY));
+	}
+	
+	@Override
+	public Ln[] borders() {
+		return new Ln[] {
+			this
+		};
+	}
+	
+	public static Ln[] borders(double startX, double startY, double endX, double endY) {
+		return new Ln[] {
+			new Ln(startX, startY, endX, endY)
+		};
 	}
 
 	@Override
 	public boolean intersects(Shp s) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		if (s instanceof Pt) {
+			return contains(s);
+		}
+		if (s instanceof Ln) {
+			return intersection((Ln) s) != null;
+		}
+		if (s instanceof Rect) {
+			return intersections((Rect) s).length != 0;
+		}
+		return false;
 	}
 
 	@Override
@@ -62,6 +88,30 @@ public final class Ln implements Shp<Ln> {
 	public Delta centerDelta(Shp s) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+
+	@Override
+	public Ln shifted(double dx, double dy) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Ln shifted(Delta d) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Ln scaled(boolean fromCenter, double scale) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Ln quantized(double quantum) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	
+	public Ln reversed() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 	
 	public Angle angle() {
 		throw new UnsupportedOperationException("Not supported yet.");
@@ -80,25 +130,18 @@ public final class Ln implements Shp<Ln> {
 	}
 	
 	public Pt intersection(Ln l2) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return intersection(start.x, start.y, end.x, end.y, l2.start.x, l2.start.y, l2.end.x, l2.end.y);
+	}
+	
+	public Pt intersection(double xa1, double ya1, double xa2, double ya2, double xb1, double yb1, double xb2, double yb2) {
+		double div = (ya2 - ya1) * (xa2 - xa1) - (xb2 - xb1) * (yb2 - yb1);
+		if (div == 0) { return null; }
+		double tb = ((yb2 - ya1) * (xa2 - xa1) + (xb1 - xa1) * (yb2 - yb1)) / div;
+		if (tb < 0 || tb > 1) { return null; }
+		return new Pt(xb1 + tb * (xb2 - xb1), yb1 + tb * (yb2 - yb1));
 	}
 	
 	public Pt[] intersections(Rect r2) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public Ln shifted(double dx, double dy) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public Ln shifted(Delta d) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public Ln scaled(boolean fromCenter, double scale) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

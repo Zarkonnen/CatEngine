@@ -86,4 +86,14 @@ public final class Pt implements Shp<Pt> {
 	public Pt scaled(boolean fromCenter, double scale) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+
+	@Override
+	public Ln[] borders() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Pt quantized(double quantum) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }
