@@ -80,6 +80,7 @@ public final class Clr implements Serializable {
 	public static final Clr WHITE = new Clr(255, 255, 255);
 	public static final Clr GREY = new Clr(127, 127, 127);
 	public static final Clr LIGHT_GREY = new Clr(191, 191, 191);
+	public static final Clr DARK_GREY = new Clr(31, 31, 31);
 	public static final Clr RED = new Clr(255, 0, 0);
 	public static final Clr GREEN = new Clr(0, 255, 0);
 	public static final Clr BLUE = new Clr(0, 0, 255);
@@ -93,6 +94,7 @@ public final class Clr implements Serializable {
 		COLORS.put("WHITE", WHITE);
 		COLORS.put("GREY", GREY);
 		COLORS.put("LIGHT_GREY", LIGHT_GREY);
+		COLORS.put("DARK_GREY", DARK_GREY);
 		COLORS.put("RED", RED);
 		COLORS.put("GREEN", GREEN);
 		COLORS.put("BLUE", BLUE);
