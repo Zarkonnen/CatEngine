@@ -72,36 +72,43 @@ public class Draw {
 	}
 	
 	public Draw blit(Img img, double x, double y) {
+		if (img == null) { return this; }
 		f.blit(img.src, null, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
 	
 	public Draw blit(Img img, double x, double y, double angle) {
+		if (img == null) { return this; }
 		f.blit(img.src, null, x, y, 0, 0, angle, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y) {
+		if (img == null) { return this; }
 		f.blit(img.src, c, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
 	
 	public Draw blit(Img img, double x, double y, double width, double height) {
+		if (img == null) { return this; }
 		f.blit(img.src, null, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y, double width, double height) {
+		if (img == null) { return this; }
 		f.blit(img.src, c, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y, double angle) {
+		if (img == null) { return this; }
 		f.blit(img.src, c, x, y, 0, 0, angle, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y, double width, double height, double angle) {
+		if (img == null) { return this; }
 		f.blit(img.src, c, x, y, width, height, angle, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped);
 		return this;
 	}
@@ -157,21 +164,25 @@ public class Draw {
 	}
 	
 	public Draw blit(Img img, double x, double y, Hook hook) {
+		if (img == null) { return this; }
 		hs.add(f.blit(img.src, null, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
 		return this;
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y, Hook hook) {
+		if (img == null) { return this; }
 		hs.add(f.blit(img.src, c, x, y, 0, 0, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
 		return this;
 	}
 	
 	public Draw blit(Img img, double x, double y, double width, double height, Hook hook) {
+		if (img == null) { return this; }
 		hs.add(f.blit(img.src, null, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
 		return this;
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y, double width, double height, Hook hook) {
+		if (img == null) { return this; }
 		hs.add(f.blit(img.src, c, x, y, width, height, 0, img.srcX, img.srcY, img.srcWidth, img.srcHeight, img.flipped), hook);
 		return this;
 	}
