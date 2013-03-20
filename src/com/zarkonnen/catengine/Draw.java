@@ -238,7 +238,6 @@ public class Draw {
 		int c = 0;
 		int r = 0;
 		int n = 0;
-		char[] cs = text.toCharArray();
 		Clr bgC = null;
 		Clr tintC = null;
 		Clr defaultTintC = null;
@@ -246,7 +245,7 @@ public class Draw {
 		String hookText = null;
 		double hookX = 0, hookY = 0;
 		
-		while (n < cs.length) {
+		while (n < text.length()) {
 			/*if (c >= cols) {
 				c = 0;
 				r++;
@@ -256,21 +255,21 @@ public class Draw {
 			int realNextSpace = n;
 			boolean inSquareBrackets = false;
 			boolean inCurlyBrackets = false;
-			while (nextSpace < cs.length) {
-				if (cs[nextSpace] == ' ' || cs[nextSpace] == '\n') {
+			while (nextSpace < text.length()) {
+				if (text.charAt(nextSpace) == ' ' || text.charAt(nextSpace) == '\n') {
 					break;
 				}
-				if (cs[nextSpace] == '[') {
+				if (text.charAt(nextSpace) == '[') {
 					inSquareBrackets = true;
 				}
-				if (cs[nextSpace] == ']') {
+				if (text.charAt(nextSpace) == ']') {
 					inSquareBrackets = false;
 				}
-				if (cs[nextSpace] == '{') {
+				if (text.charAt(nextSpace) == '{') {
 					inCurlyBrackets = true;
 					realNextSpace += 2;
 				}
-				if (cs[nextSpace] == '}') {
+				if (text.charAt(nextSpace) == '}') {
 					inCurlyBrackets = false;
 				}
 				if (!inCurlyBrackets && !inSquareBrackets) {
@@ -279,7 +278,7 @@ public class Draw {
 				nextSpace++;
 			}
 			boolean justIncrementedRow = false;
-			if (realNextSpace - n + c >= cols && realNextSpace != cs.length) {
+			if (realNextSpace - n + c >= cols && realNextSpace != text.length()) {
 				c = 0;
 				r++;
 				justIncrementedRow = true;
@@ -287,21 +286,19 @@ public class Draw {
 			if (r >= rows) {
 				return this;
 			}
-			if (cs[n] == '\\' && allowCommands) {
+			if (text.charAt(n) == '\\' && allowCommands) {
 				n++;
 			} else {
-				if (cs[n] == '\n') {
+				if (text.charAt(n) == '\n') {
 					c = 0;
 					if (!justIncrementedRow) { r++; }
 					n++;
 					continue;
 				}
-				if (cs[n] == '{' && allowCommands) {
+				if (text.charAt(n) == '{' && allowCommands) {
 					int n2 = n + 1;
-					while (cs[n2] != '}') { n2++; }
-					char[] name = new char[n2 - n - 1];
-					System.arraycopy(cs, n + 1, name, 0, name.length);
-					String nameS = new String(name);
+					while (text.charAt(n2) != '}') { n2++; }
+					String nameS = text.substring(n + 1, n2);
 					String sym = null;
 					Clr symC = null;
 					if (nameS.startsWith("[") && nameS.contains("]")) {
@@ -336,13 +333,10 @@ public class Draw {
 					}
 					continue;
 				}
-				if (cs[n] == '[' && allowCommands) {
+				if (text.charAt(n) == '[' && allowCommands) {
 					int n2 = n + 1;
-					while (cs[n2] != ']') { n2++; }
-					char[] name = new char[n2 - n - 1];
-					System.arraycopy(cs, n + 1, name, 0, name.length);
-					String tintN = new String(name);
-					
+					while (text.charAt(n2) != ']') { n2++; }
+					String tintN = text.substring(n + 1, n2);
 					if (tintN.startsWith("!")) {
 						if (tintN.equals("!")) {
 							if (hookText != null) {
@@ -413,7 +407,7 @@ public class Draw {
 					0,
 					0
 					, 0, 0, 0, 0, false);*/
-			blit(fount.get(cs[n]), tintC, x + c * fount.displayWidth, y + r * fount.lineHeight);
+			blit(fount.get(text.charAt(n)), tintC, x + c * fount.displayWidth, y + r * fount.lineHeight);
 			c++;
 			n++;
 		}
@@ -483,7 +477,6 @@ public class Draw {
 				if (cs[n] == '{' && allowCommands) {
 					int n2 = n + 1;
 					while (cs[n2] != '}') { n2++; }
-					char[] name = new char[n2 - n - 1];
 					n = n2 + 1;
 					c += 1; // qqDPS
 					continue;
