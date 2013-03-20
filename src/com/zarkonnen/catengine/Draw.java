@@ -47,7 +47,7 @@ public class Draw {
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y, double width, double height) {
-		f.blit(img, c, x, 1, y, width, height, 0);
+		f.blit(img, c, 1, x, y, width, height, 0);
 		return this;
 	}
 	
