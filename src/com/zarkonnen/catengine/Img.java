@@ -10,11 +10,19 @@ import java.util.HashMap;
 
 public class Img implements Serializable {
 	public final String src;
+	public final String key;
 	public final int srcX;
 	public final int srcY;
 	public final int srcWidth;
 	public final int srcHeight;
 	public final boolean flipped;
+	public transient Object machineImgCache;
+	public transient int machineWCache;
+	public transient int machineHCache;
+	
+	public Img(String src) {
+		this(src, 0, 0, 0, 0, false);
+	}
 
 	public Img(String src, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipped) {
 		this.src = src;
@@ -23,6 +31,11 @@ public class Img implements Serializable {
 		this.srcWidth = srcWidth;
 		this.srcHeight = srcHeight;
 		this.flipped = flipped;
+		if (flipped) {
+			key = src + "___flipped";
+		} else {
+			key = src;
+		}
 	}
 	
 	public Img flip() {

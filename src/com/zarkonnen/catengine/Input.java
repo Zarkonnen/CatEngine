@@ -11,7 +11,10 @@ public interface Input {
 	public String lastKeyPressed();
 	public Pt cursor();
 	public Pt click();
+	public Pt clicked();
 	public int clickButton();
+	
+	public int msDelta();
 	
 	public ScreenMode mode();
 	public Input setMode(ScreenMode mode);
@@ -20,12 +23,12 @@ public interface Input {
 	public boolean isCursorVisible();
 	public Input setCursorVisible(boolean visible);
 	
+	public void preload(List<Img> images);
+	
 	public void play(String sound, double pitch, double volume, double x, double y);
-	public void preloadSounds(List<String> sound, Runnable preloadDone);
 	
 	public void playMusic(String music, double volume, MusicCallback startedCallback, MusicCallback doneCallback);
 	public void stopMusic();
-	public void preloadMusic(List<String> music, Runnable preloadDone);
 	
 	public void quit();
 }
