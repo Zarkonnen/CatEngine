@@ -9,7 +9,7 @@ import java.util.Map;
 public class Draw {
 	Frame f;
 	Hooks hs = new Hooks();
-	
+		
 	public Hooks getHooks() { return hs; }
 	
 	public Draw(Frame f) {
@@ -20,6 +20,11 @@ public class Draw {
 		this.f = f;
 		this.hs = hs;
 	}
+	
+	public void shift(double dx, double dy) { f.shift(dx, dy); }
+	public void scale(double xScale, double yScale) { f.scale(xScale, yScale); }
+	public void rotate(double angle) { f.rotate(angle); }
+	public void resetTransforms() { f.resetTransforms(); }
 	
 	public Draw blit(Img img, double x, double y) {
 		f.blit(img, null, 1, x, y, 0, 0, 0);
@@ -247,7 +252,7 @@ public class Draw {
 					if (sym == null) { sym = nameS; }
 					int overhang = 0; // qqDPS
 					Img symImg = symbols.get(sym);
-					f.blit(symImg, symC, 1, x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang, 0, 0, 0);
+					blit(symImg, symC, 1, x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang);
 					Rect imgSz = symImg == null ? null : new Rect(x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang, symImg.srcWidth, symImg.srcHeight);
 					n = n2 + 1;
 					if (imgSz != null) {
