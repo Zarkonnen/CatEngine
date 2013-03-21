@@ -166,6 +166,7 @@ public class Draw {
 		int n = 0;
 		Clr bgC = null;
 		Clr tintC = null;
+		double textAlpha = 1.0;
 		Clr defaultTintC = null;
 		
 		String hookText = null;
@@ -293,7 +294,12 @@ public class Draw {
 						def = true;
 						tintN = tintN.substring("default=".length());
 					}
+					double newAlpha = 1.0;
 					Clr newC = null;
+					if (tintN.matches("[0-9a-fA-F]{10}")) {
+						newAlpha = Integer.parseInt(tintN.substring(8, 10), 16) / 255.0;
+						tintN = tintN.substring(0, 8);
+					}
 					if (!tintN.isEmpty()) {
 						newC = knownColors.get(tintN);
 						if (newC == null) {
@@ -317,25 +323,17 @@ public class Draw {
 						defaultTintC = newC;
 					} else {
 						tintC = newC;
+						textAlpha = newAlpha;
 					}
 					n = n2 + 1;
 					continue;
 				}
 			}
-			//int codePt = Character.codePointAt(cs, n);
 			if (bgC != null) {
 				f.rect(bgC, x + c * fount.displayWidth - (n == 0 ? -2 : 1), y + r * fount.lineHeight - 2,
 					fount.displayWidth, fount.lineHeight, 0);
 			}
-			/*f.blit(
-					fount.img + codePt,
-					tintC,
-					x + c * fount.displayWidth, y + r * fount.lineHeight,
-					0,
-					0,
-					0
-					, 0, 0, 0, 0, false);*/
-			blit(fount.get(text.charAt(n)), tintC, x + c * fount.displayWidth, y + r * fount.lineHeight);
+			blit(fount.get(text.charAt(n)), tintC, textAlpha, x + c * fount.displayWidth, y + r * fount.lineHeight, 0, 0, 0);
 			c++;
 			n++;
 		}
