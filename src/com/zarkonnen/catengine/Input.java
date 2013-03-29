@@ -24,6 +24,7 @@ public interface Input {
 	public Input setCursorVisible(boolean visible);
 	
 	public void preload(List<Img> images);
+	public void preloadSounds(List<String> sounds);
 	
 	public void play(String sound, double pitch, double volume, double x, double y);
 	

@@ -95,7 +95,7 @@ public class Draw {
 	}
 	
 	public Draw blit(Img img, Clr c, double x, double y, double width, double height, Hook hook) {
-		blit(img, x, y, width, height);
+		blit(img, c, x, y, width, height);
 		hs.add(new Rect(x, y, width, height), hook);
 		return this;
 	}
