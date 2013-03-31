@@ -21,6 +21,8 @@ public class Draw {
 		this.hs = hs;
 	}
 	
+	public Frame frame() { return f; }
+	
 	public void shift(double dx, double dy) { f.shift(dx, dy); }
 	public void scale(double xScale, double yScale) { f.scale(xScale, yScale); }
 	public void rotate(double angle) { f.rotate(angle); }
