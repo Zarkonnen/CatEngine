@@ -85,6 +85,7 @@ public final class Clr implements Serializable {
 	public static final Clr GREEN = new Clr(0, 255, 0);
 	public static final Clr BLUE = new Clr(0, 0, 255);
 	public static final Clr YELLOW = new Clr(255, 255, 0);
+	public static final Clr ORANGE = new Clr(255, 127, 0);
 	public static final Clr MAGENTA = new Clr(255, 0, 255);
 	public static final Clr CYAN = new Clr(0, 255, 255);
 	
