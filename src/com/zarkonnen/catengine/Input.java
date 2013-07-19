@@ -13,6 +13,7 @@ public interface Input {
 	public Pt click();
 	public Pt clicked();
 	public int clickButton();
+	public int scrollAmount();
 	
 	public int msDelta();
 	

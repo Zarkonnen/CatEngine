@@ -255,8 +255,12 @@ public class Draw {
 					if (sym == null) { sym = nameS; }
 					int overhang = 0; // qqDPS
 					Img symImg = symbols.get(sym);
-					blit(symImg, symC, 1, x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang);
-					Rect imgSz = symImg == null ? null : new Rect(x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang, symImg.srcWidth, symImg.srcHeight);
+					if (symImg == null) {
+						symImg = new Img(sym);
+						symbols.put(sym, symImg);
+					}
+					blit(symImg, symC, x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang);
+					Rect imgSz = symImg == null ? null : new Rect(x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang, f.getWidth(symImg), f.getHeight(symImg));
 					n = n2 + 1;
 					if (imgSz != null) {
 						hs.add(imgSz, hooksForStrings.get("{" + sym + "}"));
