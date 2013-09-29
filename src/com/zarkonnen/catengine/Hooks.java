@@ -6,7 +6,7 @@ import com.zarkonnen.catengine.util.Rect;
 import java.util.ArrayList;
 
 public class Hooks {
-	private ArrayList<Pair<Rect, Hook>> list = new ArrayList<Pair<Rect, Hook>>();
+	public ArrayList<Pair<Rect, Hook>> list = new ArrayList<Pair<Rect, Hook>>();
 	
 	public Hooks add(Rect r, Hook h) {
 		if (r == null || h == null) { return this; }
@@ -23,9 +23,9 @@ public class Hooks {
 				hoverDone = true;
 				h.b.run(in, h.a.relative(in.cursor()), Hook.Type.HOVER);
 			}
-			if (!clickDone && h.b.ofType(Hook.Type.values()[in.clickButton()]) && h.a.contains(in.click())) {
+			if (!clickDone && h.b.ofType(Hook.Type.values()[in.clickButton()]) && h.a.contains(in.mouseDown())) {
 				clickDone = true;
-				h.b.run(in, h.a.relative(in.click()), Hook.Type.values()[in.clickButton()]);
+				h.b.run(in, h.a.relative(in.mouseDown()), Hook.Type.values()[in.clickButton()]);
 			}
 			if (clickDone && hoverDone) { list.clear(); return; }
 		}

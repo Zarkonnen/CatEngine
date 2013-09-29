@@ -10,7 +10,7 @@ public interface Input {
 	public boolean keyPressed(String key);
 	public String lastKeyPressed();
 	public Pt cursor();
-	public Pt click();
+	public Pt mouseDown();
 	public Pt clicked();
 	public int clickButton();
 	public int scrollAmount();
