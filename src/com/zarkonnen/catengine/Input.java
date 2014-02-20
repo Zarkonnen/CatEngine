@@ -9,6 +9,7 @@ public interface Input {
 	public boolean keyDown(String key);
 	public boolean keyPressed(String key);
 	public String lastKeyPressed();
+	public char lastInput();
 	public Pt cursor();
 	public Pt mouseDown();
 	public Pt clicked();
