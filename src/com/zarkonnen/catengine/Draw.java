@@ -158,8 +158,10 @@ public class Draw {
 	HashMap<String, Img> symbols = new HashMap<String, Img>();
 	
 	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands, Map<String, Hook> hooksForStrings) {
-		for (Map.Entry<String, Hook> sub : hooksForStrings.entrySet()) {
-			text = text.replace(sub.getKey(), "[!" + sub.getKey() + "]" + sub.getKey() + "[!]");
+		if (hooksForStrings != null) {
+			for (Map.Entry<String, Hook> sub : hooksForStrings.entrySet()) {
+				text = text.replace(sub.getKey(), "[!" + sub.getKey() + "]" + sub.getKey() + "[!]");
+			}
 		}
 		int cols = maxWidth / fount.displayWidth;
 		int rows = maxHeight / fount.lineHeight;
