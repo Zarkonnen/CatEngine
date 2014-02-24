@@ -209,7 +209,7 @@ public class Draw {
 				nextSpace++;
 			}
 			boolean justIncrementedRow = false;
-			if (realNextSpace - n + c >= cols && realNextSpace != text.length()) {
+			if (realNextSpace - n + c >= cols && c != 0) {// && realNextSpace != text.length()) { // I wish I knew why I put this in in the first place!
 				c = 0;
 				r++;
 				justIncrementedRow = true;
@@ -391,7 +391,7 @@ public class Draw {
 				nextSpace++;
 			}
 			boolean justIncrementedRow = false;
-			if (realNextSpace - n + c >= cols && realNextSpace != cs.length) {
+			if (realNextSpace - n + c >= cols && c != 0) {// && realNextSpace != text.length()) { // I wish I knew why I put this in in the first place!
 				c = 0;
 				r++;
 				justIncrementedRow = true;
