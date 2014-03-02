@@ -16,6 +16,7 @@ public class Hooks {
 	
 	public void hit(Input in) {
 		boolean hoverDone = false;
+		boolean downDone = false;
 		boolean clickDone = false;
 		for (int i = list.size() - 1; i >= 0; i--) {
 			Pair<Rect, Hook> h = list.get(i);
@@ -23,11 +24,15 @@ public class Hooks {
 				hoverDone = true;
 				h.b.run(in, h.a.relative(in.cursor()), Hook.Type.HOVER);
 			}
-			if (!clickDone && h.b.ofType(Hook.Type.values()[in.clickButton()]) && h.a.contains(in.mouseDown())) {
-				clickDone = true;
+			if (!downDone && h.b.ofType(Hook.Type.values()[in.clickButton()]) && h.a.contains(in.mouseDown())) {
+				downDone = true;
 				h.b.run(in, h.a.relative(in.mouseDown()), Hook.Type.values()[in.clickButton()]);
 			}
-			if (clickDone && hoverDone) { list.clear(); return; }
+			if (!clickDone &&/* h.b.ofType(Hook.Type.values()[in.clickButton() + 3]) && */h.a.contains(in.clicked())) {
+				clickDone = true;
+				h.b.run(in, h.a.relative(in.clicked()), Hook.Type.values()[in.clickButton() + 3]);
+			}
+			if (clickDone && downDone && hoverDone) { list.clear(); return; }
 		}
 		list.clear();
 	}

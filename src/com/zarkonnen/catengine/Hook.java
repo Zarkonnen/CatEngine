@@ -5,9 +5,12 @@ import com.zarkonnen.catengine.util.Pt;
 public abstract class Hook {
 	public static enum Type {
 		HOVER,
-		MOUSE_1,
-		MOUSE_2,
-		MOUSE_3
+		MOUSE_1_DOWN,
+		MOUSE_2_DOWN,
+		MOUSE_3_DOWN,
+		MOUSE_1_CLICKED,
+		MOUSE_2_CLICKED,
+		MOUSE_3_CLICKED
 	}
 
 	public Hook(Type... type) {
