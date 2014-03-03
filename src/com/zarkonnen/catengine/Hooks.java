@@ -28,7 +28,7 @@ public class Hooks {
 				downDone = true;
 				h.b.run(in, h.a.relative(in.mouseDown()), Hook.Type.values()[in.clickButton()]);
 			}
-			if (!clickDone &&/* h.b.ofType(Hook.Type.values()[in.clickButton() + 3]) && */h.a.contains(in.clicked())) {
+			if (!clickDone && h.b.ofType(Hook.Type.values()[in.clickButton() + 3]) && h.a.contains(in.clicked())) {
 				clickDone = true;
 				h.b.run(in, h.a.relative(in.clicked()), Hook.Type.values()[in.clickButton() + 3]);
 			}
