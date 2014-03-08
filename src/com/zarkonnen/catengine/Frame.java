@@ -1,6 +1,7 @@
 package com.zarkonnen.catengine;
 
 import com.zarkonnen.catengine.util.Clr;
+import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.ScreenMode;
 
 public interface Frame {
@@ -9,6 +10,7 @@ public interface Frame {
 	
 	public Object nativeRenderer();
 
+	public Pt cursor();
 	public void rect(Clr c, double x, double y, double width, double height, double angle);
 	public void blit(Img img, Clr tint, double alpha, double x, double y, double width, double height, double angle);
 	

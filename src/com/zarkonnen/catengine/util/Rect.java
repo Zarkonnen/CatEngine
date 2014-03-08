@@ -41,6 +41,15 @@ public final class Rect implements Shp<Rect> {
 		hash = 53 * hash + (int) (Double.doubleToLongBits(this.height) ^ (Double.doubleToLongBits(this.height) >>> 32));
 		return hash;
 	}
+	
+	public static boolean contains(double x, double y, double width, double height, Pt p) {
+		return
+				p != null &&
+				p.x >= x &&
+				p.y >= y &&
+				p.x <  x + width &&
+				p.y <  y + height;
+	}
 
 	public boolean contains(Pt p) {
 		return

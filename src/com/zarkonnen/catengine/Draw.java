@@ -28,6 +28,10 @@ public class Draw {
 	public void rotate(double angle) { f.rotate(angle); }
 	public void resetTransforms() { f.resetTransforms(); }
 	
+	public Pt cursor() {
+		return f.cursor();
+	}
+	
 	public Draw blit(Img img, double x, double y) {
 		f.blit(img, null, 1, x, y, 0, 0, 0);
 		return this;
