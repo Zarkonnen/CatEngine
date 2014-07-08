@@ -1,8 +1,8 @@
 package com.zarkonnen.catengine;
 
-import static com.zarkonnen.catengine.util.Utils.*;
-
 import com.zarkonnen.catengine.util.Rect;
+import static com.zarkonnen.catengine.util.Utils.*;
+import com.zarkonnen.catengine.util.Utils.Pair;
 import java.util.ArrayList;
 
 public class Hooks {
@@ -28,7 +28,7 @@ public class Hooks {
 				downDone = true;
 				h.b.run(in, h.a.relative(in.mouseDown()), Hook.Type.values()[in.clickButton()]);
 			}
-			if (!clickDone && h.b.ofType(Hook.Type.values()[in.clickButton() + 3]) && h.a.contains(in.clicked())) {
+			if (!clickDone && (in.clickButton() + 3) < Hook.Type.values().length && h.b.ofType(Hook.Type.values()[in.clickButton() + 3]) && h.a.contains(in.clicked())) {
 				clickDone = true;
 				h.b.run(in, h.a.relative(in.clicked()), Hook.Type.values()[in.clickButton() + 3]);
 			}
