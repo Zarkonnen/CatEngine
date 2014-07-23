@@ -5,6 +5,7 @@ import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.Rect;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Draw {
 	Frame f;
@@ -161,6 +162,8 @@ public class Draw {
 	
 	HashMap<String, Img> symbols = new HashMap<String, Img>();
 	
+	static final Pattern IS_ALPHA_CLR = Pattern.compile("[0-9a-fA-F]{10}");
+	
 	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands, Map<String, Hook> hooksForStrings) {
 		if (hooksForStrings != null) {
 			for (Map.Entry<String, Hook> sub : hooksForStrings.entrySet()) {
@@ -308,7 +311,7 @@ public class Draw {
 					}
 					double newAlpha = 1.0;
 					Clr newC = null;
-					if (tintN.matches("[0-9a-fA-F]{10}")) {
+					if (tintN.length() == 10 && IS_ALPHA_CLR.matcher(tintN).matches()) {
 						newAlpha = Integer.parseInt(tintN.substring(8, 10), 16) / 255.0;
 						tintN = tintN.substring(0, 8);
 					}
