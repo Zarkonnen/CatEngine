@@ -32,6 +32,7 @@ public interface Input {
 	
 	public void playMusic(String music, double volume, MusicCallback startedCallback, MusicCallback doneCallback);
 	public void stopMusic();
+	public void fadeOutMusic(int ms);
 	
 	public void quit();
 }
