@@ -25,7 +25,7 @@ public class Hooks {
 				h.b.run(in, h.a.relative(in.cursor()), Hook.Type.HOVER);
 			}
 			// qqDPS Fixing things up for now to deal with lack of downButton.
-			if (!downDone /*&& h.b.ofType(Hook.Type.values()[in.clickButton()])*/ && h.a.contains(in.mouseDown())) {
+			if (!downDone && h.b.ofType(Hook.Type.MOUSE_1_DOWN) && h.a.contains(in.mouseDown())) {
 				downDone = true;
 				h.b.run(in, h.a.relative(in.mouseDown()), Hook.Type.values()[in.clickButton()]);
 			}
