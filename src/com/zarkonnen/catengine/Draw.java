@@ -124,19 +124,11 @@ public class Draw {
 	}
 	
 	public Draw text(String text, Fount f, double x, double y) {
-		return text(text, f, x, y, 10000, 10000, true, new HashMap<String, Hook>());
+		return text(text, f, x, y, 10000, 10000, true);
 	}
 	
 	public Draw text(String text, Fount f, double x, double y, int maxWidth) {
-		return text(text, f, x, y, maxWidth, 10000, true, new HashMap<String, Hook>());
-	}
-	
-	public Draw text(String text, Fount f, double x, double y, Map<String, Hook> hooks) {
-		return text(text, f, x, y, 10000, 10000, true, hooks);
-	}
-	
-	public Draw text(String text, Fount f, double x, double y, int maxWidth, Map<String, Hook> hooks) {
-		return text(text, f, x, y, maxWidth, 10000, true, hooks);
+		return text(text, f, x, y, maxWidth, 10000, true);
 	}
 	
 	public Pt textSize(String text, Fount f) {
@@ -163,80 +155,78 @@ public class Draw {
 	HashMap<String, Img> symbols = new HashMap<String, Img>();
 	
 	static final Pattern IS_ALPHA_CLR = Pattern.compile("[0-9a-fA-F]{10}");
+
+	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands) {
+		doText(true, text, fount, x, y, maxWidth, maxHeight, allowCommands);
+		return this;
+	}
 	
-	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands, Map<String, Hook> hooksForStrings) {
-		if (hooksForStrings != null) {
-			for (Map.Entry<String, Hook> sub : hooksForStrings.entrySet()) {
-				text = text.replace(sub.getKey(), "[!" + sub.getKey() + "]" + sub.getKey() + "[!]");
-			}
-		}
-		int cols = maxWidth / fount.displayWidth;
+	public Pt textSize(String text, Fount fount, int maxWidth, int maxHeight, boolean allowCommands) {
+		return doText(false, text, fount, 0, 0, maxWidth, maxHeight, allowCommands);
+	}
+	
+	public Pt doText(boolean doRender, String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands) {
 		int rows = maxHeight / fount.lineHeight;
-		int c = 0;
-		int r = 0;
-		int n = 0;
+		int xOffset = 0;
+		int row = 0;
+		int textIndex = 0;
 		Clr bgC = null;
 		Clr tintC = null;
 		double textAlpha = 1.0;
 		Clr defaultTintC = null;
+		int biggestWidth = 0;
 		
-		String hookText = null;
-		double hookX = 0, hookY = 0;
-		
-		while (n < text.length()) {
-			/*if (c >= cols) {
-				c = 0;
-				r++;
-			}*/
+		while (textIndex < text.length()) {
 			// Look ahead
-			int nextSpace = n;
-			int realNextSpace = n;
+			int nextSpaceIndex = textIndex;
+			int nextWordWidth = 0;
 			boolean inSquareBrackets = false;
 			boolean inCurlyBrackets = false;
-			while (nextSpace < text.length()) {
-				if (text.charAt(nextSpace) == ' ' || text.charAt(nextSpace) == '\n') {
+			while (nextSpaceIndex < text.length()) {
+				char c = text.charAt(nextSpaceIndex);
+				if (c == ' ' || c == '\n') {
 					break;
 				}
-				if (text.charAt(nextSpace) == '[') {
+				if (c == '[') {
 					inSquareBrackets = true;
 				}
-				if (text.charAt(nextSpace) == ']') {
+				if (c == ']') {
 					inSquareBrackets = false;
 				}
-				if (text.charAt(nextSpace) == '{') {
+				if (c == '{') {
 					inCurlyBrackets = true;
-					realNextSpace += 2;
 				}
-				if (text.charAt(nextSpace) == '}') {
+				if (c == '}') {
 					inCurlyBrackets = false;
 				}
 				if (!inCurlyBrackets && !inSquareBrackets) {
-					realNextSpace++;
+					nextWordWidth += fount.getWidth(c);
 				}
-				nextSpace++;
+				nextSpaceIndex++;
 			}
 			boolean justIncrementedRow = false;
-			if (realNextSpace - n + c >= cols && c != 0) {// && realNextSpace != text.length()) { // I wish I knew why I put this in in the first place!
-				c = 0;
-				r++;
+			if (xOffset != 0 && xOffset + nextWordWidth > maxWidth) {
+				biggestWidth = Math.max(biggestWidth, xOffset);
+				xOffset = 0;
+				row++;
 				justIncrementedRow = true;
 			}
-			if (r >= rows) {
-				return this;
+			if (row >= rows) {
+				break;
 			}
-			if (text.charAt(n) == '\\' && allowCommands) {
-				n++;
+			if (text.charAt(textIndex) == '\\' && allowCommands) {
+				textIndex++;
 			} else {
-				if (text.charAt(n) == '\n') {
-					c = 0;
-					if (!justIncrementedRow) { r++; }
-					n++;
+				if (text.charAt(textIndex) == '\n') {
+					xOffset = 0;
+					if (!justIncrementedRow) { row++; }
+					textIndex++;
 					continue;
 				}
-				if (text.charAt(n) == '{' && allowCommands) {
-					int n2 = n + 1;
+				if (text.charAt(textIndex) == '{' && allowCommands) {
+					int n2 = textIndex + 1;
 					while (text.charAt(n2) != '}') { n2++; }
-					String nameS = text.substring(n + 1, n2);
+					String nameS = text.substring(textIndex + 1, n2);
 					String sym = null;
 					Clr symC = null;
 					if (nameS.startsWith("[") && nameS.contains("]")) {
@@ -262,42 +252,22 @@ public class Draw {
 					}
 					
 					if (sym == null) { sym = nameS; }
-					int overhang = 0; // qqDPS
 					Img symImg = symbols.get(sym);
 					if (symImg == null) {
 						symImg = new Img(sym);
 						symbols.put(sym, symImg);
 					}
-					blit(symImg, symC, x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang);
-					Rect imgSz = symImg == null ? null : new Rect(x + (c) * fount.displayWidth, y + r * fount.lineHeight + overhang, f.getWidth(symImg), f.getHeight(symImg));
-					n = n2 + 1;
-					if (imgSz != null) {
-						hs.add(imgSz, hooksForStrings.get("{" + sym + "}"));
-						c += (imgSz.width / fount.displayWidth) + (imgSz.width % fount.displayWidth == 0 ? 0 : 1);
+					if (doRender) {
+						blit(symImg, symC, x + xOffset, y + row * fount.lineHeight);
 					}
+					textIndex = n2 + 1;
+					xOffset += symImg.srcWidth;
 					continue;
 				}
-				if (text.charAt(n) == '[' && allowCommands) {
-					int n2 = n + 1;
+				if (text.charAt(textIndex) == '[' && allowCommands) {
+					int n2 = textIndex + 1;
 					while (text.charAt(n2) != ']') { n2++; }
-					String tintN = text.substring(n + 1, n2);
-					if (tintN.startsWith("!")) {
-						if (tintN.equals("!")) {
-							if (hookText != null) {
-								//System.out.println(text);
-								//System.out.println(new Rect(hookX, hookY, x + (c) * fount.displayWidth - hookX, y + r * fount.height + fount.height - hookY));
-								hs.add(new Rect(hookX, hookY, x + (c) * fount.displayWidth - hookX, y + r * fount.lineHeight + fount.lineHeight - hookY), hooksForStrings.get(hookText));
-								hookText = null;
-							}
-						} else {
-							hookText = tintN.substring(1);
-							hookX = x + (c) * fount.displayWidth;
-							hookY = y + r * fount.lineHeight;
-						}
-						
-						n = n2 + 1;
-						continue;
-					}
+					String tintN = text.substring(textIndex + 1, n2);
 					
 					boolean def = false;
 					boolean bg = false;
@@ -340,100 +310,25 @@ public class Draw {
 						tintC = newC;
 						textAlpha = newAlpha;
 					}
-					n = n2 + 1;
+					textIndex = n2 + 1;
 					continue;
 				}
 			}
-			if (bgC != null) {
-				f.rect(bgC, x + c * fount.displayWidth - (n == 0 ? -2 : 1), y + r * fount.lineHeight - 2,
-					fount.displayWidth, fount.lineHeight, 0);
+			char currentChar = text.charAt(textIndex);
+			int charWidth = fount.getWidth(currentChar);
+			if (doRender) {
+				if (bgC != null) {
+					f.rect(bgC, x + xOffset, y + row * fount.lineHeight, charWidth, fount.lineHeight, 0);
+				}
+				blit(fount.get(currentChar), tintC, textAlpha, x + xOffset, y + row * fount.lineHeight, 0, 0, 0);
 			}
-			blit(fount.get(text.charAt(n)), tintC, textAlpha, x + c * fount.displayWidth, y + r * fount.lineHeight, 0, 0, 0);
-			c++;
-			n++;
+			xOffset += charWidth;
+			textIndex++;
 		}
-		return this;
-	}
-	
-	public Pt textSize(String text, Fount fount, int maxWidth, int maxHeight, boolean allowCommands) {
-		int widthReached = 0;
-		int heightReached = 0;
-		
-		int cols = maxWidth / fount.displayWidth;
-		int rows = maxHeight / fount.lineHeight;
-		int c = 0;
-		int r = 0;
-		int n = 0;
-		char[] cs = text.toCharArray();
-		while (n < cs.length) {
-			/*if (c >= cols) {
-				c = 0;
-				r++;
-			}*/
-			// Look ahead
-			int nextSpace = n;
-			int realNextSpace = n;
-			boolean inSquareBrackets = false;
-			boolean inCurlyBrackets = false;
-			while (nextSpace < cs.length) {
-				if (cs[nextSpace] == ' ' || cs[nextSpace] == '\n') {
-					break;
-				}
-				if (cs[nextSpace] == '[') {
-					inSquareBrackets = true;
-				}
-				if (cs[nextSpace] == ']') {
-					inSquareBrackets = false;
-				}
-				if (cs[nextSpace] == '{') {
-					inCurlyBrackets = true;
-					realNextSpace += 2;
-				}
-				if (cs[nextSpace] == '}') {
-					inCurlyBrackets = false;
-				}
-				if (!inCurlyBrackets && !inSquareBrackets) {
-					realNextSpace++;
-				}
-				nextSpace++;
-			}
-			boolean justIncrementedRow = false;
-			if (realNextSpace - n + c >= cols && c != 0) {// && realNextSpace != text.length()) { // I wish I knew why I put this in in the first place!
-				c = 0;
-				r++;
-				justIncrementedRow = true;
-			}
-			if (r >= rows) {
-				return new Pt(widthReached + 1, heightReached + 1);
-			}
-			if (cs[n] == '\\' && allowCommands) {
-				n++;
-			} else {
-				if (cs[n] == '\n') {
-					c = 0;
-					if (!justIncrementedRow) { r++; }
-					n++;
-					continue;
-				}
-				if (cs[n] == '{' && allowCommands) {
-					int n2 = n + 1;
-					while (cs[n2] != '}') { n2++; }
-					n = n2 + 1;
-					c += 1; // qqDPS
-					continue;
-				}
-				if (cs[n] == '[' && allowCommands) {
-					int n2 = n + 1;
-					while (cs[n2] != ']') { n2++; }
-					n = n2 + 1;
-					continue;
-				}
-			}
-			widthReached = Math.max(widthReached, c * fount.displayWidth + fount.displayWidth);
-			heightReached = Math.max(heightReached, r * fount.lineHeight + fount.lineHeight);
-			c++;
-			n++;
+		if (doRender) {
+			return null;
+		} else {
+			return new Pt(Math.max(biggestWidth, xOffset), fount.lineHeight * (row + 1));
 		}
-		return new Pt(widthReached + 1, heightReached + 1);
 	}
 }
