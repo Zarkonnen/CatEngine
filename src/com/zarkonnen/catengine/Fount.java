@@ -61,7 +61,7 @@ public final class Fount {
 				));
 				maxH = Math.max(maxH, Integer.parseInt(rectDef[3]));
 			}
-			int lineHeight = maxH * 3 / 2;
+			int lineHeight = maxH * 4 / 3;
 			return new Fount(img, positions, lineHeight);
 		} catch (Exception e) {
 			return null;
