@@ -318,7 +318,7 @@ public class Draw {
 			int charWidth = fount.getWidth(currentChar);
 			if (doRender) {
 				if (bgC != null) {
-					f.rect(bgC, x + xOffset, y + row * fount.lineHeight, charWidth, fount.lineHeight, 0);
+					f.rect(bgC, x + xOffset, y + row * fount.lineHeight, charWidth, fount.height, 0);
 				}
 				blit(fount.get(currentChar), tintC, textAlpha, x + xOffset, y + row * fount.lineHeight, 0, 0, 0);
 			}
