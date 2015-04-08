@@ -45,6 +45,15 @@ public final class Clr implements Serializable {
 				clamp((int) (a * (1 - proportion) + c2.a * proportion))
 		);
 	}
+	
+	public Clr mult(Clr c2) {
+		return c2 == null ? this : new Clr(
+				r * c2.r / 255,
+				g * c2.g / 255,
+				b * c2.b / 255,
+				a * c2.a / 255
+		);
+	}
 
 	@Override
 	public int hashCode() {
