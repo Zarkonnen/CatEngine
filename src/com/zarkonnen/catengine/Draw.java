@@ -218,8 +218,11 @@ public class Draw {
 				textIndex++;
 			} else {
 				if (text.charAt(textIndex) == '\n') {
+					if (!justIncrementedRow) {
+						biggestWidth = Math.max(biggestWidth, xOffset);
+						row++;
+					}
 					xOffset = 0;
-					if (!justIncrementedRow) { row++; }
 					textIndex++;
 					continue;
 				}
