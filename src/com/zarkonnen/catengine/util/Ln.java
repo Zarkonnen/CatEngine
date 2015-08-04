@@ -133,7 +133,7 @@ public final class Ln implements Shp<Ln> {
 		return intersection(start.x, start.y, end.x, end.y, l2.start.x, l2.start.y, l2.end.x, l2.end.y);
 	}
 	
-	public Pt intersection(double xa1, double ya1, double xa2, double ya2, double xb1, double yb1, double xb2, double yb2) {
+	public static Pt intersection(double xa1, double ya1, double xa2, double ya2, double xb1, double yb1, double xb2, double yb2) {
 		double div = (ya2 - ya1) * (xa2 - xa1) - (xb2 - xb1) * (yb2 - yb1);
 		if (div == 0) { return null; }
 		double tb = ((yb2 - ya1) * (xa2 - xa1) + (xb1 - xa1) * (yb2 - yb1)) / div;

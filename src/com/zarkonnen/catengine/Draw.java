@@ -200,7 +200,7 @@ public class Draw {
 					inCurlyBrackets = false;
 				}
 				if (!inCurlyBrackets && !inSquareBrackets) {
-					nextWordWidth += fount.getWidth(c);
+					nextWordWidth += fount.getWidth(c) + fount.letterSpacing;
 				}
 				nextSpaceIndex++;
 			}
@@ -318,12 +318,12 @@ public class Draw {
 				}
 			}
 			char currentChar = text.charAt(textIndex);
-			int charWidth = fount.getWidth(currentChar);
+			int charWidth = fount.getWidth(currentChar) + fount.letterSpacing;
 			if (doRender) {
 				if (bgC != null) {
-					f.rect(bgC, x + xOffset, y + row * fount.lineHeight, charWidth, fount.height, 0);
+					f.rect(bgC, x + xOffset + fount.letterOffset, y + row * (fount.lineHeight + fount.letterOffset) + fount.letterOffset, charWidth, fount.height, 0);
 				}
-				blit(fount.get(currentChar), tintC, textAlpha, x + xOffset, y + row * fount.lineHeight, 0, 0, 0);
+				blit(fount.get(currentChar), tintC, textAlpha, x + xOffset + fount.letterOffset, y + row * (fount.lineHeight + fount.letterOffset) + fount.letterOffset, 0, 0, 0);
 			}
 			xOffset += charWidth;
 			textIndex++;

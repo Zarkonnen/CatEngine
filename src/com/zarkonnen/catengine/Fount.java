@@ -12,6 +12,8 @@ public final class Fount {
 	public final HashMap<Integer, Img> extended = new HashMap<Integer, Img>();
 	public final int height;
 	public final int displayWidth;
+	public final int letterSpacing;
+	public final int letterOffset;
 	
 	public static class Rect {
 		int x, y, w, h;
@@ -24,7 +26,7 @@ public final class Fount {
 		}
 	}
 
-	public Fount(String img, HashMap<String, Rect> positions, int lineHeight) {
+	public Fount(String img, HashMap<String, Rect> positions, int lineHeight, int letterSpacing, int letterXOffset) {
 		this.img = img;
 		this.lineHeight = lineHeight;
 		
@@ -43,6 +45,8 @@ public final class Fount {
 		}
 		height = maxH;
 		displayWidth = maxW;
+		this.letterSpacing = letterSpacing;
+		this.letterOffset = letterXOffset;
 	}
 	
 	public static Fount fromResource(String img, String metrics) {
@@ -51,18 +55,26 @@ public final class Fount {
 			String l = null;
 			HashMap<String, Rect> positions = new HashMap<String, Rect>();
 			int maxH = 1;
+			int ls = 0;
+			int lio = 0;
 			while ((l = br.readLine()) != null) {
-				String[] rectDef = br.readLine().split(" ");
-				positions.put(l, new Rect(
-						Integer.parseInt(rectDef[0]),
-						Integer.parseInt(rectDef[1]),
-						Integer.parseInt(rectDef[2]),
-						Integer.parseInt(rectDef[3])
-				));
-				maxH = Math.max(maxH, Integer.parseInt(rectDef[3]));
+				if (l.startsWith("letterSpacing ")) {
+					ls = Integer.parseInt(l.split(" ")[1]);
+				} else if (l.startsWith("letterXOffset ")) {
+					lio = Integer.parseInt(l.split(" ")[1]);
+				} else {
+					String[] rectDef = br.readLine().split(" ");
+					positions.put(l, new Rect(
+							Integer.parseInt(rectDef[0]),
+							Integer.parseInt(rectDef[1]),
+							Integer.parseInt(rectDef[2]),
+							Integer.parseInt(rectDef[3])
+					));
+					maxH = Math.max(maxH, Integer.parseInt(rectDef[3]));
+				}
 			}
 			int lineHeight = maxH;// * 4 / 3;
-			return new Fount(img, positions, lineHeight);
+			return new Fount(img, positions, lineHeight, ls, lio);
 		} catch (Exception e) {
 			return null;
 		}
