@@ -1,6 +1,7 @@
 package com.zarkonnen.catengine;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,8 +51,12 @@ public final class Fount {
 	}
 	
 	public static Fount fromResource(String img, String metrics) {
+		return fromStream(img, Fount.class.getResourceAsStream(metrics));
+	}
+	
+	public static Fount fromStream(String img, InputStream stream) {
 		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(Fount.class.getResourceAsStream(metrics), "UTF-8"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
 			String l = null;
 			HashMap<String, Rect> positions = new HashMap<String, Rect>();
 			int maxH = 1;
