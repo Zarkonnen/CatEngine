@@ -180,6 +180,7 @@ public class Draw {
 			// Look ahead
 			int nextSpaceIndex = textIndex;
 			int nextWordWidth = 0;
+			int nextLetterWidth = 0;
 			boolean inSquareBrackets = false;
 			boolean inCurlyBrackets = false;
 			while (nextSpaceIndex < text.length()) {
@@ -201,11 +202,14 @@ public class Draw {
 				}
 				if (!inCurlyBrackets && !inSquareBrackets) {
 					nextWordWidth += fount.getWidth(c) + fount.letterSpacing;
+					if (nextLetterWidth == 0) {
+						nextLetterWidth = fount.getWidth(c) + fount.letterSpacing;
+					}
 				}
 				nextSpaceIndex++;
 			}
 			boolean justIncrementedRow = false;
-			if (xOffset != 0 && xOffset + nextWordWidth > maxWidth) {
+			if (xOffset != 0 && xOffset + nextWordWidth > maxWidth && (xOffset + nextLetterWidth > maxWidth || nextWordWidth < maxWidth)) {
 				biggestWidth = Math.max(biggestWidth, xOffset);
 				xOffset = 0;
 				row++;
