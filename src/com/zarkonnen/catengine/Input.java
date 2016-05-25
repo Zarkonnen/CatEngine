@@ -12,6 +12,7 @@ public interface Input {
 	public char lastInput();
 	public Pt cursor();
 	public Pt mouseDown();
+	public int mouseDownButton();
 	public Pt clicked();
 	public int clickButton();
 	public int scrollAmount();
