@@ -124,15 +124,15 @@ public class Draw {
 	}
 	
 	public Draw text(String text, Fount f, double x, double y) {
-		return text(text, f, x, y, 10000, 10000, true);
+		return text(text, f, x, y, 10000, 10000, 0, true);
 	}
 	
 	public Draw text(String text, Fount f, double x, double y, int maxWidth) {
-		return text(text, f, x, y, maxWidth, 10000, true);
+		return text(text, f, x, y, maxWidth, 10000, 0, true);
 	}
 	
 	public Pt textSize(String text, Fount f) {
-		return textSize(text, f, 10000, 10000, true);
+		return textSize(text, f, 10000, 10000, 0, true);
 	}
 	
 	public Rect textSize(String text, Fount f, double x, double y) {
@@ -141,7 +141,7 @@ public class Draw {
 	}
 	
 	public Rect textSize(String text, Fount f, double x, double y, int maxWidth) {
-		Pt ts = textSize(text, f, maxWidth, 10000, true);
+		Pt ts = textSize(text, f, maxWidth, 10000, 0, true);
 		return new Rect(x, y, ts.x, ts.y);
 	}
 	
@@ -156,16 +156,16 @@ public class Draw {
 	
 	static final Pattern IS_ALPHA_CLR = Pattern.compile("[0-9a-fA-F]{10}");
 
-	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands) {
-		doText(true, text, fount, x, y, maxWidth, maxHeight, allowCommands);
+	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
+		doText(true, text, fount, x, y, maxWidth, maxHeight, lineHeightDelta, allowCommands);
 		return this;
 	}
 	
-	public Pt textSize(String text, Fount fount, int maxWidth, int maxHeight, boolean allowCommands) {
-		return doText(false, text, fount, 0, 0, maxWidth, maxHeight, allowCommands);
+	public Pt textSize(String text, Fount fount, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
+		return doText(false, text, fount, 0, 0, maxWidth, maxHeight, lineHeightDelta, allowCommands);
 	}
 	
-	public Pt doText(boolean doRender, String text, Fount fount, double x, double y, int maxWidth, int maxHeight, boolean allowCommands) {
+	public Pt doText(boolean doRender, String text, Fount fount, double x, double y, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
 		int rows = maxHeight / fount.lineHeight;
 		int xOffset = 0;
 		int row = 0;
@@ -265,7 +265,7 @@ public class Draw {
 						symbols.put(sym, symImg);
 					}
 					if (doRender) {
-						blit(symImg, symC, x + xOffset, y + row * fount.lineHeight);
+						blit(symImg, symC, x + xOffset, y + row * (fount.lineHeight + lineHeightDelta));
 					}
 					textIndex = n2 + 1;
 					xOffset += symImg.srcWidth;
@@ -325,9 +325,9 @@ public class Draw {
 			int charWidth = fount.getWidth(currentChar) + fount.letterSpacing;
 			if (doRender) {
 				if (bgC != null) {
-					f.rect(bgC, x + xOffset + fount.letterOffset, y + row * (fount.lineHeight + fount.letterOffset) + fount.letterOffset, charWidth, fount.height, 0);
+					f.rect(bgC, x + xOffset + fount.letterOffset, y + row * (fount.lineHeight + lineHeightDelta + fount.letterOffset) + fount.letterOffset, charWidth, fount.height, 0);
 				}
-				blit(fount.get(currentChar), tintC, textAlpha, x + xOffset + fount.letterOffset, y + row * (fount.lineHeight + fount.letterOffset) + fount.letterOffset, 0, 0, 0);
+				blit(fount.get(currentChar), tintC, textAlpha, x + xOffset + fount.letterOffset, y + row * (fount.lineHeight + lineHeightDelta + fount.letterOffset) + fount.letterOffset, 0, 0, 0);
 			}
 			xOffset += charWidth;
 			textIndex++;
@@ -335,7 +335,7 @@ public class Draw {
 		if (doRender) {
 			return null;
 		} else {
-			return new Pt(Math.max(biggestWidth, xOffset), fount.lineHeight * (row + 1));
+			return new Pt(Math.max(biggestWidth, xOffset), (fount.lineHeight + lineHeightDelta) * (row + 1));
 		}
 	}
 }
