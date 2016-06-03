@@ -3,6 +3,7 @@ package com.zarkonnen.catengine;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ public final class Fount {
 	public final int displayWidth;
 	public final int letterSpacing;
 	public final int letterOffset;
+	public final ArrayList<Fount> subFounts = new ArrayList<Fount>();
 	
 	public static class Rect {
 		int x, y, w, h;
@@ -48,6 +50,11 @@ public final class Fount {
 		displayWidth = maxW;
 		this.letterSpacing = letterSpacing;
 		this.letterOffset = letterXOffset;
+	}
+	
+	public Fount withSubFount(Fount sub) {
+		subFounts.add(sub);
+		return this;
 	}
 	
 	public static Fount fromResource(String img, String metrics) {
@@ -87,19 +94,35 @@ public final class Fount {
 	
 	public Img get(char c) {
 		int cNum = (int) c;
-		if (cNum < 256) {
+		if (cNum < 256 && imgs[cNum] != null) {
 			return imgs[cNum];
-		} else {
+		} else if (extended.containsKey(cNum)) {
 			return extended.get(cNum);
+		} else {
+			for (Fount sub : subFounts) {
+				Img subFountImg = sub.get(c);
+				if (subFountImg != null) {
+					return subFountImg;
+				}
+			}
 		}
+		return null;
 	}
 	
 	public int getWidth(char c) {
 		int cNum = (int) c;
-		if (cNum < 256) {
+		if (cNum < 256 && imgs[cNum] != null) {
 			return imgs[cNum] == null ? 0 : imgs[cNum].srcWidth;
+		} else if (extended.containsKey(cNum)) {
+			return extended.get(cNum).srcWidth;
 		} else {
-			return extended.containsKey(cNum) ? extended.get(cNum).srcWidth : 0;
+			for (Fount sub : subFounts) {
+				int subFountW = sub.getWidth(c);
+				if (subFountW != 0) {
+					return subFountW;
+				}
+			}
 		}
+		return 0;
 	}
 }

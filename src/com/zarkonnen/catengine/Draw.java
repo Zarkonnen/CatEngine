@@ -4,6 +4,7 @@ import com.zarkonnen.catengine.util.Clr;
 import com.zarkonnen.catengine.util.Pt;
 import com.zarkonnen.catengine.util.Rect;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -165,6 +166,14 @@ public class Draw {
 		return doText(false, text, fount, 0, 0, maxWidth, maxHeight, lineHeightDelta, allowCommands);
 	}
 	
+	static final HashSet<Character> UNBREAKABLE = new HashSet<Character>();
+	static {
+		String unb = "？！・：；。．、，）\"」』ー一…‥";
+		for (int i = 0; i < unb.length(); i++) {
+			UNBREAKABLE.add(unb.charAt(i));
+		}
+	}
+	
 	public Pt doText(boolean doRender, String text, Fount fount, double x, double y, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
 		int rows = maxHeight / fount.lineHeight;
 		int xOffset = 0;
@@ -209,7 +218,13 @@ public class Draw {
 				nextSpaceIndex++;
 			}
 			boolean justIncrementedRow = false;
-			if (xOffset != 0 && xOffset + nextWordWidth > maxWidth && (xOffset + nextLetterWidth > maxWidth || nextWordWidth < maxWidth)) {
+			if (xOffset != 0 &&
+				(
+					(xOffset + nextWordWidth > maxWidth && (xOffset + nextLetterWidth > maxWidth || (nextWordWidth < maxWidth && text.charAt(textIndex - 1) == ' '/* and it's actually an entire word */)))
+					|| (textIndex < text.length() - 1 && xOffset + nextLetterWidth + fount.getWidth(text.charAt(textIndex + 1)) > maxWidth && UNBREAKABLE.contains(text.charAt(textIndex + 1)))
+				)
+			)
+			{
 				biggestWidth = Math.max(biggestWidth, xOffset);
 				xOffset = 0;
 				row++;
