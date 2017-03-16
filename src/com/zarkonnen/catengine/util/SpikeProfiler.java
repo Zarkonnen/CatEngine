@@ -11,15 +11,19 @@ public class SpikeProfiler {
 	
 	public static ArrayList<Entry> log = new ArrayList<Entry>(4096);
 	
-	public static void frameDone(long tooManyMilliseconds) {
-		if (!active) { return; }
+	public static String frameDone(String name, long tooManyMilliseconds) {
+		if (!active) { return null; }
+		
+		String outID = null;
 		
 		if (!log.isEmpty()) {
 			long nanoTimeTaken = log.get(log.size() - 1).nanoStamp - log.get(0).nanoStamp;
+			System.out.println(name + " " + nanoTimeTaken / 1000000l);
 			if (nanoTimeTaken > tooManyMilliseconds * 1000000l) {
 				if (outputDir != null) {
 					outputDir.mkdirs();
-					File f = new File(outputDir, fileIndex++ + "_" + System.currentTimeMillis() + ".txt");
+					outID = fileIndex++ + "_" + System.currentTimeMillis();
+					File f = new File(outputDir,  outID + ".txt");
 					try {
 						PrintWriter pw = new PrintWriter(f);
 						for (Entry e : log) {
@@ -42,6 +46,7 @@ public class SpikeProfiler {
 		}
 		
 		log.clear();
+		return outID;
 	}
 	
 	public static void start(String name) {
