@@ -30,6 +30,7 @@ public interface Input {
 	public void preloadSounds(List<String> sounds);
 	
 	public void play(String sound, double pitch, double volume, double x, double y);
+	public Loop loop(String sound, double pitch, double volume, double x, double y);
 	
 	public void preloadMusic(String music);
 	public void playMusic(String music, double volume, MusicCallback startedCallback, MusicCallback doneCallback);
