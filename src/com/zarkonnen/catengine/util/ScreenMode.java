@@ -4,11 +4,20 @@ public final class ScreenMode {
 	public final int width;
 	public final int height;
 	public final boolean fullscreen;
+	public final boolean fullscreenWindow;
 
 	public ScreenMode(int width, int height, boolean fullscreen) {
 		this.width = width;
 		this.height = height;
 		this.fullscreen = fullscreen;
+		this.fullscreenWindow = false;
+	}
+	
+	public ScreenMode(int width, int height, boolean fullscreen, boolean fullscreenWindow) {
+		this.width = width;
+		this.height = height;
+		this.fullscreen = fullscreen;
+		this.fullscreenWindow = fullscreenWindow;
 	}
 
 	@Override
@@ -16,7 +25,8 @@ public final class ScreenMode {
 		int hash = 7;
 		hash = 13 * hash + this.width;
 		hash = 13 * hash + this.height;
-		hash = 13 * hash + (this.fullscreen ? 1 : 0);
+		hash = 13 * hash + (this.fullscreen ? 1 : 0);		
+		hash = 13 * hash + (this.fullscreenWindow ? 1 : 0);
 		return hash;
 	}
 
@@ -26,11 +36,12 @@ public final class ScreenMode {
 		return
 				((ScreenMode) o2).width == width &&
 				((ScreenMode) o2).height == height &&
-				((ScreenMode) o2).fullscreen == fullscreen;
+				((ScreenMode) o2).fullscreen == fullscreen &&
+				((ScreenMode) o2).fullscreenWindow == fullscreenWindow;
 	}
 	
 	@Override
 	public String toString() {
-		return width + "x" + height + (fullscreen ? " Fullscreen" : " Windowed");
+		return width + "x" + height + (fullscreen ? " Fullscreen" : " Windowed") + (fullscreenWindow ? " Window" : "");
 	}
 }
