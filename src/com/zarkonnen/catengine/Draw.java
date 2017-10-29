@@ -247,7 +247,7 @@ public class Draw {
 				}
 				if (text.charAt(textIndex) == '{' && allowCommands) {
 					int n2 = textIndex + 1;
-					while (text.charAt(n2) != '}') { n2++; }
+					while (n2 < text.length() && text.charAt(n2) != '}') { n2++; }
 					String nameS = text.substring(textIndex + 1, n2);
 					String sym = null;
 					Clr symC = null;
@@ -288,7 +288,7 @@ public class Draw {
 				}
 				if (text.charAt(textIndex) == '[' && allowCommands) {
 					int n2 = textIndex + 1;
-					while (text.charAt(n2) != ']') { n2++; }
+					while (n2 < text.length() && text.charAt(n2) != ']') { n2++; }
 					String tintN = text.substring(textIndex + 1, n2);
 					
 					boolean def = false;
