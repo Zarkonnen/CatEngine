@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public final class Clr implements Serializable {
-	public int r, g, b, a;
+	public final int r, g, b, a;
+	private final String toString;
 	public transient Object machineColorCache;
 
 	public Clr(int r, int g, int b, int a) {
@@ -12,6 +13,7 @@ public final class Clr implements Serializable {
 		this.g = g;
 		this.b = b;
 		this.a = a;
+		toString = hex(r) + hex(g) + hex(b) + (a == 255 ? "" : hex(a));
 	}
 
 	public Clr(int r, int g, int b) {
@@ -19,6 +21,7 @@ public final class Clr implements Serializable {
 		this.g = g;
 		this.b = b;
 		this.a = 255;
+		toString = hex(r) + hex(g) + hex(b) + (a == 255 ? "" : hex(a));
 	}
 	
 	public static Clr fromHex(String hex) {
@@ -77,7 +80,7 @@ public final class Clr implements Serializable {
 	
 	@Override
 	public String toString() {
-		return hex(r) + hex(g) + hex(b) + (a == 255 ? "" : hex(a));
+		return toString;
 	}
 	
 	String hex(int i) {
