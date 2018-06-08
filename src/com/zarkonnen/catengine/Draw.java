@@ -158,12 +158,19 @@ public class Draw {
 	static final Pattern IS_ALPHA_CLR = Pattern.compile("[0-9a-fA-F]{10}");
 
 	public Draw text(String text, Fount fount, double x, double y, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
-		doText(true, text, fount, x, y, maxWidth, maxHeight, lineHeightDelta, allowCommands);
+		doText(true, -1, text, fount, x, y, maxWidth, maxHeight, lineHeightDelta, allowCommands);
 		return this;
 	}
 	
 	public Pt textSize(String text, Fount fount, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
-		return doText(false, text, fount, 0, 0, maxWidth, maxHeight, lineHeightDelta, allowCommands);
+		return doText(false, -1, text, fount, 0, 0, maxWidth, maxHeight, lineHeightDelta, allowCommands);
+	}
+	
+	public Rect charLocation(String text, int charLoc, Fount fount, int maxWidth, int maxHeight, int lineHeightDelta) {
+		if (charLoc == -1) { return new Rect(0, 0, 0, fount.lineHeight); }
+		Pt p = doText(false, charLoc, text, fount, 0, 0, maxWidth, maxHeight, lineHeightDelta, false);
+		int charWidth = charLoc > text.length() ? 0 : fount.getWidth(text.charAt(charLoc));
+		return new Rect(p.x - charWidth, p.y - fount.lineHeight, charWidth, fount.lineHeight);
 	}
 	
 	static final HashSet<Character> UNBREAKABLE = new HashSet<Character>();
@@ -174,7 +181,7 @@ public class Draw {
 		}
 	}
 	
-	public Pt doText(boolean doRender, String text, Fount fount, double x, double y, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
+	public Pt doText(boolean doRender, int returnCharIndex, String text, Fount fount, double x, double y, int maxWidth, int maxHeight, int lineHeightDelta, boolean allowCommands) {
 		int rows = maxHeight / fount.lineHeight;
 		int xOffset = 0;
 		int row = 0;
@@ -184,6 +191,8 @@ public class Draw {
 		double textAlpha = 1.0;
 		Clr defaultTintC = null;
 		int biggestWidth = 0;
+		
+		int returnCharX = 0, returnCharRow = 0;
 		
 		while (textIndex < text.length()) {
 			// Look ahead
@@ -345,12 +354,19 @@ public class Draw {
 				blit(fount.get(currentChar), tintC, textAlpha, x + xOffset + fount.letterOffset, y + row * (fount.lineHeight + lineHeightDelta + fount.letterOffset) + fount.letterOffset, 0, 0, 0);
 			}
 			xOffset += charWidth;
+			if (textIndex == returnCharIndex) {
+				returnCharX = xOffset;
+				returnCharRow = row;
+			}
 			textIndex++;
 		}
 		if (doRender) {
 			return null;
 		} else {
-			return new Pt(Math.max(biggestWidth, xOffset), (fount.lineHeight + lineHeightDelta) * (row + 1));
+			return
+					returnCharIndex != -1
+					? new Pt(returnCharX, (fount.lineHeight + lineHeightDelta) * (returnCharRow + 1))
+					: new Pt(Math.max(biggestWidth, xOffset), (fount.lineHeight + lineHeightDelta) * (row + 1));
 		}
 	}
 }
