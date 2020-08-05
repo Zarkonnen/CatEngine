@@ -251,6 +251,10 @@ public class Draw {
 						row++;
 					}
 					xOffset = 0;
+					if (textIndex == returnCharIndex) {
+						returnCharX = xOffset;
+						returnCharRow = row;
+					}
 					textIndex++;
 					continue;
 				}
