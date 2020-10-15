@@ -16,6 +16,12 @@ public abstract class Hook {
 
 	public Hook(Type... type) {
 		this.types = type;
+		this.name = null;
+	}
+	
+	public Hook(String name, Type... type) {
+		this.types = type;
+		this.name = name;
 	}
 	
 	public boolean ofType(Hook.Type type) {
@@ -26,5 +32,6 @@ public abstract class Hook {
 	}
 	
 	public final Type[] types;
+	public final String name;
 	public abstract void run(Input in, Pt p, Type type);
 }
