@@ -11,7 +11,8 @@ public abstract class Hook {
 		MOUSE_1_CLICKED,
 		MOUSE_2_CLICKED,
 		MOUSE_3_CLICKED,
-		TEST
+		TEST,
+		NO_TEST
 	}
 
 	public Hook(Type... type) {
